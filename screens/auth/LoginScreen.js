@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import {
   StyleSheet,
   View,
@@ -13,6 +13,7 @@ import {
   useWindowDimensions,
   Alert,
 } from 'react-native';
+import { Octicons } from '@expo/vector-icons';
 
 const initialState = {
   email: '',
@@ -22,7 +23,8 @@ const initialState = {
 const LoginScreen = () => {
   const [state, setState] = useState(initialState);
   const [showPassword, setShowPassword] = useState(false);
-  const [isFocused, setIsisFocused] = useState(false);
+  const [isFocusedInput, setIsFocusedInput] = useState(null);
+  // const [isShowKeyboard, setIsShowKeyboard] = useState(false);
 
   const { height, width } = useWindowDimensions();
 
@@ -58,44 +60,74 @@ const LoginScreen = () => {
         >
           <KeyboardAvoidingView
             behavior={Platform.OS == 'ios' ? 'padding' : 'height'}
-            keyboardVerticalOffset={Platform.OS == 'ios' ? '-180' : '-110'}
+            keyboardVerticalOffset={Platform.OS == 'ios' ? '-235' : '20'}
           >
             <View
               style={{
                 ...styles.form,
                 width: width,
+                // marginBottom: isShowKeyboard ? -235 : 0,
               }}
             >
               <Text style={styles.title}>Login</Text>
-              <View
-              // style={{ marginBottom: isShowKeyboard ? 180 : 43}}
-              >
+              <TextInput
+                style={{
+                  ...styles.input,
+                  borderColor:
+                    isFocusedInput === 'email' ? '#FF6C00' : '#E8E8E8',
+                }}
+                placeholder="Email address"
+                value={state.email}
+                onChangeText={value =>
+                  setState(prevState => ({ ...prevState, email: value }))
+                }
+                onFocus={() => {
+                  // setIsShowKeyboard(true);
+                  setIsFocusedInput('email');
+                }}
+                onBlur={() => setIsFocusedInput(null)}
+              />
+              <View style={styles.fieldPassword}>
                 <TextInput
-                  style={{ ...styles.input, marginTop: 16 }}
-                  placeholder="Email address"
-                  // onFocus={() => setIsShowKeyboard(true)}
-                  value={state.email}
-                  onChangeText={value =>
-                    setState(prevState => ({ ...prevState, email: value }))
-                  }
-                />
-                <TextInput
-                  style={{ ...styles.input, marginTop: 16 }}
+                  style={{
+                    ...styles.input,
+                    borderColor:
+                      isFocusedInput === 'password' ? '#FF6C00' : '#E8E8E8',
+                  }}
                   placeholder="Password"
-                  // onFocus={() => setIsShowKeyboard(true)}
                   value={state.password}
                   onChangeText={value =>
                     setState(prevState => ({ ...prevState, password: value }))
                   }
-                  secureTextEntry={true} // hides password
+                  onFocus={() => {
+                    // setIsShowKeyboard(true);
+                    setIsFocusedInput('password');
+                  }}
+                  onBlur={() => setIsFocusedInput(null)}
+                  secureTextEntry={!showPassword} // hides or shows password
                 />
+                {showPassword ? (
+                  <Octicons
+                    name="eye"
+                    size={24}
+                    style={styles.iconShow}
+                    onPress={handleShowPassword}
+                  />
+                ) : (
+                  <Octicons
+                    name="eye-closed"
+                    size={24}
+                    style={styles.iconShow}
+                    onPress={handleShowPassword}
+                  />
+                )}
               </View>
               <TouchableOpacity
                 activeOpacity={0.8}
                 style={styles.btn}
                 onPress={handleSubmit}
               >
-                <Text style={styles.btnTitle}>Login</Text>
+                <Text style={styles.btnTitle}>Log In</Text>
               </TouchableOpacity>
               <Text style={styles.link}>Don't have an account? Sing up</Text>
             </View>
@@ -118,14 +150,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   form: {
-    paddingLeft: 16,
-    paddingRight: 16,
+    paddingHorizontal: 16,
     backgroundColor: '#FFFFFF',
     borderTopLeftRadius: 25,
     borderTopRightRadius: 25,
   },
   title: {
-    marginTop: 92,
+    marginTop: 32,
     marginBottom: 32,
     fontFamily: 'Roboto-Medium',
     fontSize: 30,
@@ -148,19 +179,23 @@ const styles = StyleSheet.create({
       lineHeight: 19,
       color: '#BDBDBD',
     },
-    focus: {
-      borderColor: '#FF6C00',
-    },
+  },
+  fieldPassword: {
+    marginTop: 16,
+    justifyContent: 'center',
+  },
+  iconShow: {
+    position: 'absolute',
+    right: 15,
+    color: '#BDBDBD',
   },
   btn: {
     marginTop: 43,
     marginBottom: 16,
     marginHorizontal: 20,
     height: 50,
-    paddingTop: 16,
-    paddingBottom: 16,
-    paddingRight: 32,
-    paddingLeft: 32,
+    paddingVertical: 16,
+    paddingHorizontal: 32,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#FF6C00',
@@ -174,7 +209,7 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
   },
   link: {
-    marginBottom: 80,
+    marginBottom: 144,
     fontFamily: 'Roboto-Regular',
     fontSize: 16,
     lineHeight: 19,
