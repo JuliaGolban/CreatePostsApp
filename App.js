@@ -1,34 +1,25 @@
-import React, { useState } from 'react';
-import * as Font from 'expo-font';
-import { AppLoading } from 'expo';
-import { RegistrationScreen } from './screens/auth/RegistrationScreen';
+import React, { useEffect, useState } from 'react';
+import { useFonts } from 'expo-font';
+import RegistrationScreen from './screens/auth/RegistrationScreen';
+import LoginScreen from './screens/auth/LoginScreen';
 
 export default function App() {
-  const [isReady, setIsReady] = useState(false);
+  const [fontsLoaded] = useFonts({
+    'SFProDisplay-Light': require('./assets/fonts/SFProDisplay-Light.ttf'),
+    'SFProDisplay-Regular': require('./assets/fonts/SFProDisplay-Regular.ttf'),
+    'Roboto-Regular': require('./assets/fonts/Roboto-Regular.ttf'),
+    'Roboto-Medium': require('./assets/fonts/Roboto-Medium.ttf'),
+    'Roboto-Bold': require('./assets/fonts/Roboto-Bold.ttf'),
+  });
 
-  const loadFonts = async () => {
-    await Font.loadAsync({
-      'SFProDisplay-Light': require('./assets/fonts/SFProDisplay-Light.ttf'),
-      'SFProDisplay-Regular': require('./assets/fonts/SFProDisplay-Regular.ttf'),
-      'Roboto-Regular': require('./assets/fonts/Roboto-Regular.ttf'),
-      'Roboto-Medium': require('./assets/fonts/Roboto-Medium.ttf'),
-      'Roboto-Bold': require('./assets/fonts/Roboto-Bold.ttf'),
-    });
-  };
-
-  if (!isReady) {
-    return (
-      <AppLoading
-        startAsync={loadFonts}
-        onFinish={() => setIsReady(true)}
-        onError={console.warn}
-      />
-    );
+  if (!fontsLoaded) {
+    return null;
   }
 
   return (
     <>
       <RegistrationScreen />
+      {/* <LoginScreen /> */}
     </>
   );
 }

@@ -10,7 +10,8 @@ import {
   KeyboardAvoidingView,
   ImageBackground,
   Platform,
-  Dimensions,
+  useWindowDimensions,
+  Alert,
 } from 'react-native';
 
 const initialState = {
@@ -18,29 +19,28 @@ const initialState = {
   password: '',
 };
 
-export const LoginScreen = () => {
+const LoginScreen = () => {
   const [state, setState] = useState(initialState);
-  const [dimensions, setDimensions] = useState({
-    width: Dimensions.get('window').width,
-    height: Dimensions.get('window').height,
-  });
+  const [showPassword, setShowPassword] = useState(false);
+  const [isFocused, setIsisFocused] = useState(false);
 
-  useEffect(() => {
-    const onChange = () => {
-      const width = Dimensions.get('window').width;
-      const height = Dimensions.get('window').height;
-      setDimensions({ width: width, height: height });
-    };
-
-    Dimensions.addEventListener('change', onChange);
-    return () => {
-      Dimensions.removeEventListener('change', onChange);
-    };
-  }, []);
+  const { height, width } = useWindowDimensions();
 
   const keyboardHide = () => {
     // setIsShowKeyboard(false);
     Keyboard.dismiss();
+    setState(initialState);
+  };
+
+  const handleShowPassword = () => {
+    const toggle = showPassword ? false : true;
+    setShowPassword(toggle);
+  };
+
+  const handleSubmit = () => {
+    if (state.email === '' || state.password === '') {
+      return Alert.alert('Please, enter your credentials');
+    }
     console.log(state);
     setState(initialState);
   };
@@ -51,54 +51,49 @@ export const LoginScreen = () => {
         <ImageBackground
           style={{
             ...styles.backgroundImage,
-            width: dimensions.width,
-            height: dimensions.height,
+            width: width,
+            height: height,
           }}
           source={require('../../assets/images/photo_BG.jpg')}
         >
           <KeyboardAvoidingView
             behavior={Platform.OS == 'ios' ? 'padding' : 'height'}
-            keyboardVerticalOffset={Platform.OS == 'ios' ? '-180' : '-75'}
+            keyboardVerticalOffset={Platform.OS == 'ios' ? '-180' : '-110'}
           >
             <View
               style={{
-                ...styles.page,
-                width: dimensions.width,
+                ...styles.form,
+                width: width,
               }}
             >
-              <View style={styles.header}>
-                <Text style={styles.headerTitle}>Login</Text>
+              <Text style={styles.title}>Login</Text>
+              <View
+              // style={{ marginBottom: isShowKeyboard ? 180 : 43}}
+              >
+                <TextInput
+                  style={{ ...styles.input, marginTop: 16 }}
+                  placeholder="Email address"
+                  // onFocus={() => setIsShowKeyboard(true)}
+                  value={state.email}
+                  onChangeText={value =>
+                    setState(prevState => ({ ...prevState, email: value }))
+                  }
+                />
+                <TextInput
+                  style={{ ...styles.input, marginTop: 16 }}
+                  placeholder="Password"
+                  // onFocus={() => setIsShowKeyboard(true)}
+                  value={state.password}
+                  onChangeText={value =>
+                    setState(prevState => ({ ...prevState, password: value }))
+                  }
+                  secureTextEntry={true} // hides password
+                />
               </View>
-              <View style={styles.inputSet}>
-                <View style={{ marginTop: 16 }}>
-                  <TextInput
-                    style={styles.input}
-                    placeholder="Email address"
-                    // onFocus={() => setIsShowKeyboard(true)}
-                    value={state.email}
-                    onChangeText={value =>
-                      setState(prevState => ({ ...prevState, email: value }))
-                    }
-                  />
-                </View>
-                <View style={{ marginTop: 16 }}>
-                  <TextInput
-                    style={styles.input}
-                    placeholder="Password"
-                    // onFocus={() => setIsShowKeyboard(true)}
-                    value={state.password}
-                    onChangeText={value =>
-                      setState(prevState => ({ ...prevState, password: value }))
-                    }
-                    secureTextEntry={true} // hides password
-                  />
-                </View>
-              </View>
-
               <TouchableOpacity
                 activeOpacity={0.8}
                 style={styles.btn}
-                onPress={keyboardHide}
+                onPress={handleSubmit}
               >
                 <Text style={styles.btnTitle}>Login</Text>
               </TouchableOpacity>
@@ -122,30 +117,22 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
     alignItems: 'center',
   },
-  page: {
+  form: {
     paddingLeft: 16,
     paddingRight: 16,
     backgroundColor: '#FFFFFF',
     borderTopLeftRadius: 25,
     borderTopRightRadius: 25,
   },
-  header: {
-    alignItems: 'center',
-    marginBottom: 32,
-  },
-  headerTitle: {
+  title: {
     marginTop: 92,
+    marginBottom: 32,
     fontFamily: 'Roboto-Medium',
     fontSize: 30,
     fontWeight: '500',
     lineHeight: 35,
     textAlign: 'center',
     color: '#212121',
-  },
-  inputSet: {
-    display: 'flex',
-    gap: 16,
-    marginBottom: 43,
   },
   input: {
     height: 50,
@@ -166,8 +153,9 @@ const styles = StyleSheet.create({
     },
   },
   btn: {
-    marginHorizontal: 20,
+    marginTop: 43,
     marginBottom: 16,
+    marginHorizontal: 20,
     height: 50,
     paddingTop: 16,
     paddingBottom: 16,
@@ -194,3 +182,5 @@ const styles = StyleSheet.create({
     color: '#1B4371',
   },
 });
+
+export default LoginScreen;

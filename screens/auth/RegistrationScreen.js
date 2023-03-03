@@ -11,8 +11,10 @@ import {
   ImageBackground,
   Image,
   Platform,
-  Dimensions,
+  useWindowDimensions,
+  Alert,
 } from 'react-native';
+import { AntDesign, Octicons } from '@expo/vector-icons';
 
 const initialState = {
   name: '',
@@ -20,31 +22,35 @@ const initialState = {
   password: '',
 };
 
-export const RegistrationScreen = () => {
+const RegistrationScreen = () => {
   const [state, setState] = useState(initialState);
-  const [dimensions, setDimensions] = useState({
-    width: Dimensions.get('window').width,
-    height: Dimensions.get('window').height,
-  });
+  const [showPassword, setShowPassword] = useState(false);
+  const [isFocusedInput, setIsFocusedInput] = useState(null);
+  const [isLoadedAvatar, setIsLoadedAvatar] = useState(false);
 
-  useEffect(() => {
-    const onChange = () => {
-      const width = Dimensions.get('window').width;
-      const height = Dimensions.get('window').height;
-      setDimensions({ width: width, height: height });
-    };
-
-    Dimensions.addEventListener('change', onChange);
-    return () => {
-      Dimensions.removeEventListener('change', onChange);
-    };
-  }, []);
+  const { height, width } = useWindowDimensions();
 
   const keyboardHide = () => {
-    // setIsShowKeyboard(false);
     Keyboard.dismiss();
+    setState(initialState);
+  };
+
+  const handleShowPassword = () => {
+    const toggle = showPassword ? false : true;
+    setShowPassword(toggle);
+  };
+
+  const handleSubmit = () => {
+    if (state.name === '' || state.email === '' || state.password === '') {
+      return Alert.alert('Please, enter your credentials');
+    }
     console.log(state);
     setState(initialState);
+  };
+
+  const handleLoadAvatar = () => {
+    const toggle = isLoadedAvatar ? false : true;
+    setIsLoadedAvatar(toggle);
   };
 
   return (
@@ -53,65 +59,115 @@ export const RegistrationScreen = () => {
         <ImageBackground
           style={{
             ...styles.backgroundImage,
-            width: dimensions.width,
-            height: dimensions.height,
+            width: width,
+            height: height,
           }}
           source={require('../../assets/images/photo_BG.jpg')}
         >
           <KeyboardAvoidingView
             behavior={Platform.OS == 'ios' ? 'padding' : 'height'}
-            keyboardVerticalOffset={Platform.OS == 'ios' ? '-180' : '-75'}
+            keyboardVerticalOffset={Platform.OS == 'ios' ? '-180' : '-50'}
           >
             <View
               style={{
-                ...styles.page,
-                width: dimensions.width,
+                ...styles.form,
+                width: width,
               }}
             >
-              <View style={styles.header}>
-                <Text style={styles.headerTitle}>Registration</Text>
+              <View style={styles.imageBox}>
+                <Image style={styles.image} alt="user avatar" />
+                {/* <Image 
+                    style={styles.btnAdd}
+                    source={require('../../assets/icons/add.png')}
+                    alt="add"
+                  /> */}
+                <TouchableOpacity
+                  activeOpacity={0.8}
+                  onPress={handleLoadAvatar}
+                >
+                  {isLoadedAvatar ? (
+                    <AntDesign
+                      name="closecircleo"
+                      size={25}
+                      color="#E8E8E8"
+                      style={styles.btnAdd}
+                    />
+                  ) : (
+                    <AntDesign
+                      name="pluscircleo"
+                      size={25}
+                      color="#FF6C00"
+                      style={styles.btnAdd}
+                    />
+                  )}
+                </TouchableOpacity>
               </View>
-              <View style={styles.inputSet}>
-                <View>
-                  <TextInput
-                    style={styles.input}
-                    placeholder="Login"
-                    // onFocus={() => setIsShowKeyboard(true)}
-                    value={state.name}
-                    onChangeText={value =>
-                      setState(prevState => ({ ...prevState, name: value }))
-                    }
+              <Text style={styles.title}>Registration</Text>
+              <TextInput
+                style={{
+                  ...styles.input,
+                  borderColor:
+                    isFocusedInput === 'login' ? '#FF6C00' : '#E8E8E8',
+                }}
+                placeholder="Login"
+                value={state.name}
+                onChangeText={value =>
+                  setState(prevState => ({ ...prevState, name: value }))
+                }
+                onFocus={() => setIsFocusedInput('login')}
+                onBlur={() => setIsFocusedInput(null)}
+              />
+              <TextInput
+                style={{
+                  ...styles.input,
+                  marginTop: 16,
+                  borderColor:
+                    isFocusedInput === 'email' ? '#FF6C00' : '#E8E8E8',
+                }}
+                placeholder="Email address"
+                value={state.email}
+                onChangeText={value =>
+                  setState(prevState => ({ ...prevState, email: value }))
+                }
+                onFocus={() => setIsFocusedInput('email')}
+                onBlur={() => setIsFocusedInput(null)}
+              />
+              <View style={styles.fieldPassword}>
+                <TextInput
+                  style={{
+                    ...styles.input,
+                    borderColor:
+                      isFocusedInput === 'password' ? '#FF6C00' : '#E8E8E8',
+                  }}
+                  placeholder="Password"
+                  value={state.password}
+                  onChangeText={value =>
+                    setState(prevState => ({ ...prevState, password: value }))
+                  }
+                  onFocus={() => setIsFocusedInput('password')}
+                  onBlur={() => setIsFocusedInput(null)}
+                  secureTextEntry={!showPassword} // hides or shows password
+                />
+                {showPassword ? (
+                  <Octicons
+                    name="eye-closed"
+                    size={24}
+                    style={styles.iconShow}
+                    onPress={handleShowPassword}
                   />
-                </View>
-                <View style={{ marginTop: 16 }}>
-                  <TextInput
-                    style={styles.input}
-                    placeholder="Email address"
-                    // onFocus={() => setIsShowKeyboard(true)}
-                    value={state.email}
-                    onChangeText={value =>
-                      setState(prevState => ({ ...prevState, email: value }))
-                    }
+                ) : (
+                  <Octicons
+                    name="eye"
+                    size={24}
+                    style={styles.iconShow}
+                    onPress={handleShowPassword}
                   />
-                </View>
-                <View style={{ marginTop: 16 }}>
-                  <TextInput
-                    style={styles.input}
-                    placeholder="Password"
-                    // onFocus={() => setIsShowKeyboard(true)}
-                    value={state.password}
-                    onChangeText={value =>
-                      setState(prevState => ({ ...prevState, password: value }))
-                    }
-                    secureTextEntry={true} // hides password
-                  />
-                </View>
+                )}
               </View>
-
               <TouchableOpacity
                 activeOpacity={0.8}
                 style={styles.btn}
-                onPress={keyboardHide}
+                onPress={handleSubmit}
               >
                 <Text style={styles.btnTitle}>Register</Text>
               </TouchableOpacity>
@@ -135,30 +191,50 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
     alignItems: 'center',
   },
-  page: {
+  form: {
     paddingLeft: 16,
     paddingRight: 16,
     backgroundColor: '#FFFFFF',
     borderTopLeftRadius: 25,
     borderTopRightRadius: 25,
   },
-  header: {
+  imageBox: {
     alignItems: 'center',
     marginBottom: 32,
   },
-  headerTitle: {
-    marginTop: 92,
+  image: {
+    position: 'absolute',
+    top: -60,
+    flex: 1,
+    resizeMode: 'cover',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    width: 120,
+    height: 120,
+    backgroundColor: '#F6F6F6',
+    borderRadius: 16,
+  },
+  btnAdd: {
+    position: 'absolute',
+    top: 21,
+    left: 46,
+    width: 25,
+    height: 25,
+    borderRadius: 13,
+    overflow: 'hidden',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#FFFFFF',
+  },
+  title: {
+    marginTop: 52,
+    marginBottom: 32,
     fontFamily: 'Roboto-Medium',
     fontSize: 30,
     fontWeight: '500',
     lineHeight: 35,
     textAlign: 'center',
     color: '#212121',
-  },
-  inputSet: {
-    display: 'flex',
-    gap: 16,
-    marginBottom: 43,
   },
   input: {
     height: 50,
@@ -174,12 +250,19 @@ const styles = StyleSheet.create({
       lineHeight: 19,
       color: '#BDBDBD',
     },
-    focus: {
-      borderColor: '#FF6C00',
-    },
+  },
+  fieldPassword: {
+    marginTop: 16,
+    justifyContent: 'center',
+  },
+  iconShow: {
+    position: 'absolute',
+    right: 15,
+    color: '#BDBDBD',
   },
   btn: {
     marginHorizontal: 20,
+    marginTop: 43,
     marginBottom: 16,
     height: 50,
     paddingTop: 16,
@@ -207,3 +290,5 @@ const styles = StyleSheet.create({
     color: '#1B4371',
   },
 });
+
+export default RegistrationScreen;
