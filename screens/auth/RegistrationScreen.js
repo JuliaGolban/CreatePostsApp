@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import {
   StyleSheet,
   View,
@@ -66,7 +66,7 @@ const RegistrationScreen = () => {
         >
           <KeyboardAvoidingView
             behavior={Platform.OS == 'ios' ? 'padding' : 'height'}
-            keyboardVerticalOffset={Platform.OS == 'ios' ? '-180' : '-50'}
+            keyboardVerticalOffset={Platform.OS == 'ios' ? '-170' : '-80'}
           >
             <View
               style={{
@@ -150,14 +150,14 @@ const RegistrationScreen = () => {
                 />
                 {showPassword ? (
                   <Octicons
-                    name="eye-closed"
+                    name="eye"
                     size={24}
                     style={styles.iconShow}
                     onPress={handleShowPassword}
                   />
                 ) : (
                   <Octicons
-                    name="eye"
+                    name="eye-closed"
                     size={24}
                     style={styles.iconShow}
                     onPress={handleShowPassword}
@@ -169,7 +169,7 @@ const RegistrationScreen = () => {
                 style={styles.btn}
                 onPress={handleSubmit}
               >
-                <Text style={styles.btnTitle}>Register</Text>
+                <Text style={styles.btnTitle}>Sign Up</Text>
               </TouchableOpacity>
               <Text style={styles.link}>Already have an account? Login</Text>
             </View>
@@ -192,8 +192,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   form: {
-    paddingLeft: 16,
-    paddingRight: 16,
+    paddingHorizontal: 16,
     backgroundColor: '#FFFFFF',
     borderTopLeftRadius: 25,
     borderTopRightRadius: 25,
@@ -265,10 +264,8 @@ const styles = StyleSheet.create({
     marginTop: 43,
     marginBottom: 16,
     height: 50,
-    paddingTop: 16,
-    paddingBottom: 16,
-    paddingRight: 32,
-    paddingLeft: 32,
+    paddingVertical: 16,
+    paddingHorizontal: 32,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#FF6C00',
@@ -282,7 +279,7 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
   },
   link: {
-    marginBottom: 80,
+    marginBottom: 78,
     fontFamily: 'Roboto-Regular',
     fontSize: 16,
     lineHeight: 19,
