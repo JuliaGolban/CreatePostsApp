@@ -66,7 +66,7 @@ const RegistrationScreen = () => {
         >
           <KeyboardAvoidingView
             behavior={Platform.OS == 'ios' ? 'padding' : 'height'}
-            keyboardVerticalOffset={Platform.OS == 'ios' ? '-170' : '-80'}
+            keyboardVerticalOffset={Platform.OS == 'ios' ? '-170' : '-45'}
           >
             <View
               style={{
@@ -116,6 +116,7 @@ const RegistrationScreen = () => {
                 }
                 onFocus={() => setIsFocusedInput('login')}
                 onBlur={() => setIsFocusedInput(null)}
+                returnKeyType="next"
               />
               <TextInput
                 style={{
@@ -131,6 +132,7 @@ const RegistrationScreen = () => {
                 }
                 onFocus={() => setIsFocusedInput('email')}
                 onBlur={() => setIsFocusedInput(null)}
+                returnKeyType="next"
               />
               <View style={styles.fieldPassword}>
                 <TextInput
@@ -141,12 +143,13 @@ const RegistrationScreen = () => {
                   }}
                   placeholder="Password"
                   value={state.password}
+                  secureTextEntry={!showPassword} // hides or shows password
                   onChangeText={value =>
                     setState(prevState => ({ ...prevState, password: value }))
                   }
                   onFocus={() => setIsFocusedInput('password')}
                   onBlur={() => setIsFocusedInput(null)}
-                  secureTextEntry={!showPassword} // hides or shows password
+                  returnKeyType="go"
                 />
                 {showPassword ? (
                   <Octicons
@@ -169,7 +172,7 @@ const RegistrationScreen = () => {
                 style={styles.btn}
                 onPress={handleSubmit}
               >
-                <Text style={styles.btnTitle}>Sign Up</Text>
+                <Text style={styles.btnTitle}>SignUp</Text>
               </TouchableOpacity>
               <Text style={styles.link}>Already have an account? Login</Text>
             </View>

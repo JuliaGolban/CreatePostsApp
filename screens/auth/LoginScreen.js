@@ -60,7 +60,7 @@ const LoginScreen = () => {
         >
           <KeyboardAvoidingView
             behavior={Platform.OS == 'ios' ? 'padding' : 'height'}
-            keyboardVerticalOffset={Platform.OS == 'ios' ? '-235' : '20'}
+            keyboardVerticalOffset={Platform.OS == 'ios' ? '-235' : '-15'}
           >
             <View
               style={{
@@ -86,6 +86,7 @@ const LoginScreen = () => {
                   setIsFocusedInput('email');
                 }}
                 onBlur={() => setIsFocusedInput(null)}
+                returnKeyType="next"
               />
               <View style={styles.fieldPassword}>
                 <TextInput
@@ -105,6 +106,7 @@ const LoginScreen = () => {
                   }}
                   onBlur={() => setIsFocusedInput(null)}
                   secureTextEntry={!showPassword} // hides or shows password
+                  returnKeyType="go"
                 />
                 {showPassword ? (
                   <Octicons
@@ -127,7 +129,7 @@ const LoginScreen = () => {
                 style={styles.btn}
                 onPress={handleSubmit}
               >
-                <Text style={styles.btnTitle}>Log In</Text>
+                <Text style={styles.btnTitle}>LogIn</Text>
               </TouchableOpacity>
               <Text style={styles.link}>Don't have an account? Sing up</Text>
             </View>
