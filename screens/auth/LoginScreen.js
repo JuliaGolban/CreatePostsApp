@@ -20,7 +20,7 @@ const initialState = {
   password: '',
 };
 
-const LoginScreen = () => {
+const LoginScreen = ({ navigation }) => {
   const [state, setState] = useState(initialState);
   const [showPassword, setShowPassword] = useState(false);
   const [isFocusedInput, setIsFocusedInput] = useState(null);
@@ -44,6 +44,7 @@ const LoginScreen = () => {
       return Alert.alert('Please, enter your credentials');
     }
     console.log(state);
+    // navigation.navigate('Home', { user: state });
     setState(initialState);
   };
 
@@ -129,9 +130,19 @@ const LoginScreen = () => {
                 style={styles.btn}
                 onPress={handleSubmit}
               >
-                <Text style={styles.btnTitle}>LogIn</Text>
+                <Text style={styles.btnTitle}>Log In</Text>
               </TouchableOpacity>
-              <Text style={styles.link}>Don't have an account? Sing up</Text>
+              <View style={styles.linkWrap}>
+                <Text style={styles.link}>Don't have an account? </Text>
+                <TouchableOpacity
+                  activeOpacity={0.8}
+                  onPress={() => navigation.navigate('Registration')}
+                >
+                  <Text style={{ ...styles.link, fontWeight: '700' }}>
+                    Sing up
+                  </Text>
+                </TouchableOpacity>
+              </View>
             </View>
           </KeyboardAvoidingView>
         </ImageBackground>
@@ -210,9 +221,14 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: '#FFFFFF',
   },
-  link: {
+  linkWrap: {
+    flexDirection: 'row',
+    justifyContent: 'center',
     marginBottom: 144,
+  },
+  link: {
     fontFamily: 'Roboto-Regular',
+    fontWeight: '400',
     fontSize: 16,
     lineHeight: 19,
     textAlign: 'center',

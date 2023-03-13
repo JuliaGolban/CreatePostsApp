@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
+import { NavigationContainer } from '@react-navigation/native';
 import { useFonts } from 'expo-font';
-import RegistrationScreen from './screens/auth/RegistrationScreen';
-import LoginScreen from './screens/auth/LoginScreen';
+import { useRoute } from './router';
 
 export default function App() {
+  const routing = useRoute(true);
   const [fontsLoaded] = useFonts({
     'SFProDisplay-Light': require('./assets/fonts/SFProDisplay-Light.ttf'),
     'SFProDisplay-Regular': require('./assets/fonts/SFProDisplay-Regular.ttf'),
@@ -16,10 +17,5 @@ export default function App() {
     return null;
   }
 
-  return (
-    <>
-      <RegistrationScreen />
-      {/* <LoginScreen /> */}
-    </>
-  );
+  return <NavigationContainer>{routing}</NavigationContainer>;
 }

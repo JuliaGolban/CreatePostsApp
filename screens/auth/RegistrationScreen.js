@@ -17,12 +17,12 @@ import {
 import { AntDesign, Octicons } from '@expo/vector-icons';
 
 const initialState = {
-  name: '',
+  login: '',
   email: '',
   password: '',
 };
 
-const RegistrationScreen = () => {
+const RegistrationScreen = ({ navigation }) => {
   const [state, setState] = useState(initialState);
   const [showPassword, setShowPassword] = useState(false);
   const [isFocusedInput, setIsFocusedInput] = useState(null);
@@ -45,6 +45,7 @@ const RegistrationScreen = () => {
       return Alert.alert('Please, enter your credentials');
     }
     console.log(state);
+    // navigation.navigate('Home', { user: state });
     setState(initialState);
   };
 
@@ -66,7 +67,7 @@ const RegistrationScreen = () => {
         >
           <KeyboardAvoidingView
             behavior={Platform.OS == 'ios' ? 'padding' : 'height'}
-            keyboardVerticalOffset={Platform.OS == 'ios' ? '-170' : '-45'}
+            keyboardVerticalOffset={Platform.OS == 'ios' ? '-170' : '-65'}
           >
             <View
               style={{
@@ -74,13 +75,16 @@ const RegistrationScreen = () => {
                 width: width,
               }}
             >
-              <View style={styles.imageBox}>
-                <Image style={styles.image} alt="user avatar" />
-                {/* <Image 
-                    style={styles.btnAdd}
-                    source={require('../../assets/icons/add.png')}
-                    alt="add"
-                  /> */}
+              <View style={styles.avatarWrap}>
+                {isLoadedAvatar ? (
+                  <Image
+                    style={styles.avatar}
+                    alt="user avatar"
+                    source={require('../../assets/images/avatar.jpg')}
+                  />
+                ) : (
+                  <Image style={styles.avatar} alt="user avatar" />
+                )}
                 <TouchableOpacity
                   activeOpacity={0.8}
                   onPress={handleLoadAvatar}
@@ -110,9 +114,9 @@ const RegistrationScreen = () => {
                     isFocusedInput === 'login' ? '#FF6C00' : '#E8E8E8',
                 }}
                 placeholder="Login"
-                value={state.name}
+                value={state.login}
                 onChangeText={value =>
-                  setState(prevState => ({ ...prevState, name: value }))
+                  setState(prevState => ({ ...prevState, login: value }))
                 }
                 onFocus={() => setIsFocusedInput('login')}
                 onBlur={() => setIsFocusedInput(null)}
@@ -172,9 +176,19 @@ const RegistrationScreen = () => {
                 style={styles.btn}
                 onPress={handleSubmit}
               >
-                <Text style={styles.btnTitle}>SignUp</Text>
+                <Text style={styles.btnTitle}>Sign Up</Text>
               </TouchableOpacity>
-              <Text style={styles.link}>Already have an account? Login</Text>
+              <View style={styles.linkWrap}>
+                <Text style={styles.link}>Already have an account? </Text>
+                <TouchableOpacity
+                  activeOpacity={0.8}
+                  onPress={() => navigation.navigate('Login')}
+                >
+                  <Text style={{ ...styles.link, fontWeight: '700' }}>
+                    Login
+                  </Text>
+                </TouchableOpacity>
+              </View>
             </View>
           </KeyboardAvoidingView>
         </ImageBackground>
@@ -196,15 +210,16 @@ const styles = StyleSheet.create({
   },
   form: {
     paddingHorizontal: 16,
+    columnGap: 16,
     backgroundColor: '#FFFFFF',
     borderTopLeftRadius: 25,
     borderTopRightRadius: 25,
   },
-  imageBox: {
+  avatarWrap: {
     alignItems: 'center',
     marginBottom: 32,
   },
-  image: {
+  avatar: {
     position: 'absolute',
     top: -60,
     flex: 1,
@@ -232,8 +247,8 @@ const styles = StyleSheet.create({
     marginTop: 52,
     marginBottom: 32,
     fontFamily: 'Roboto-Medium',
-    fontSize: 30,
     fontWeight: '500',
+    fontSize: 30,
     lineHeight: 35,
     textAlign: 'center',
     color: '#212121',
@@ -248,6 +263,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     placeholder: {
       fontFamily: 'Roboto-Regular',
+      fontWeight: '400',
       fontSize: 16,
       lineHeight: 19,
       color: '#BDBDBD',
@@ -276,14 +292,20 @@ const styles = StyleSheet.create({
   },
   btnTitle: {
     fontFamily: 'Roboto-Regular',
+    fontWeight: '400',
     fontSize: 16,
     lineHeight: 19,
     textAlign: 'center',
     color: '#FFFFFF',
   },
-  link: {
+  linkWrap: {
+    flexDirection: 'row',
+    justifyContent: 'center',
     marginBottom: 78,
+  },
+  link: {
     fontFamily: 'Roboto-Regular',
+    fontWeight: '400',
     fontSize: 16,
     lineHeight: 19,
     textAlign: 'center',
