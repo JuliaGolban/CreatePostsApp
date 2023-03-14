@@ -1,12 +1,5 @@
-import React, { useState } from 'react';
-import {
-  StyleSheet,
-  View,
-  Text,
-  Image,
-  FlatList,
-  useWindowDimensions,
-} from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { StyleSheet, View, Text, Image, FlatList } from 'react-native';
 import Post from '../../components/Post';
 
 const initialState = [
@@ -29,9 +22,13 @@ const initialState = [
 ];
 
 const PostsScreen = ({ navigation, route }) => {
-  // const { user } = route.params;
-  // const { post } = route.params;
   const [posts, setPosts] = useState(initialState);
+
+  useEffect(() => {
+    if (route.params) {
+      setPosts(prevState => [...prevState, route.params]);
+    }
+  }, [route.params]);
 
   return (
     <View style={styles.container}>
@@ -40,11 +37,8 @@ const PostsScreen = ({ navigation, route }) => {
           style={styles.avatar}
           alt="user avatar"
           source={require('../../assets/images/avatar.jpg')}
-          // source={user.avatar}
         />
         <View style={styles.credentials}>
-          {/* <Text style={styles.login}>{user.login}</Text>
-          <Text style={styles.email}>{user.email}</Text> */}
           <Text style={styles.login}>Natali Romanova</Text>
           <Text style={styles.email}>email@example.com</Text>
         </View>
@@ -52,6 +46,7 @@ const PostsScreen = ({ navigation, route }) => {
       <FlatList
         data={posts}
         keyExtractor={item => item.id}
+        // keyExtractor={(item, index) => index.toString()}
         renderItem={({ item }) => <Post item={item} navigation={navigation} />}
       />
     </View>

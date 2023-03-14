@@ -37,7 +37,7 @@ const CreatePostsScreen = ({ navigation }) => {
 
   const handleSubmit = () => {
     console.log(post);
-    navigation.navigate('Posts', { posts: post });
+    navigation.navigate('Posts', { post });
     setPost(initialState);
     setIsLoadedPhoto(false);
   };
@@ -45,111 +45,108 @@ const CreatePostsScreen = ({ navigation }) => {
   return (
     <TouchableWithoutFeedback onPress={keyboardHide}>
       <View style={styles.container}>
-        <KeyboardAvoidingView
-          behavior={Platform.OS == 'ios' ? 'padding' : 'height'}
-          keyboardVerticalOffset={Platform.OS == 'ios' ? '-170' : '-45'}
-        >
-          <View style={styles.photoWrapper}>
-            {post.photo !== '' ? (
-              <Image
-                style={{ ...styles.postPhoto, width: width - 16 * 2 }}
-                alt="Post"
-                source={require('../../assets/images/forest.jpg')}
-              />
-            ) : (
-              <Image
-                style={{ ...styles.postPhoto, width: width - 16 * 2 }}
-                alt="Post"
-              />
-            )}
-            {!isLoadedPhoto ? (
-              <TouchableOpacity
-                activeOpacity={0.8}
-                style={styles.iconCamera}
-                onPress={() => {
-                  setPost(prevState => ({
-                    ...prevState,
-                    photo: 'upload',
-                    id: postId,
-                  }));
-                  setIsLoadedPhoto(true);
-                }}
-              >
-                <FontAwesome name="camera" size={24} color="#BDBDBD" />
-              </TouchableOpacity>
-            ) : (
-              <TouchableOpacity
-                activeOpacity={0.8}
-                style={{ ...styles.iconCamera, backgroundColor: '#FFFFFF4d' }}
-                onPress={() => {
-                  setPost(prevState => ({ ...prevState, photo: '' }));
-                  setIsLoadedPhoto(false);
-                }}
-              >
-                <FontAwesome name="camera" size={24} c color="#FFFFFF" />
-              </TouchableOpacity>
-            )}
-          </View>
-          {!isLoadedPhoto ? (
-            <Text style={styles.postInfo}>Upload photo</Text>
+        <View style={styles.photoWrapper}>
+          {post.photo !== '' ? (
+            <Image
+              style={{ ...styles.postPhoto, width: width - 16 * 2 }}
+              alt="Post"
+              source={require('../../assets/images/forest.jpg')}
+            />
           ) : (
-            <Text style={styles.postInfo}>Edit photo</Text>
+            <Image
+              style={{ ...styles.postPhoto, width: width - 16 * 2 }}
+              alt="Post"
+            />
           )}
-          <View style={styles.postInputSet}>
+          {!isLoadedPhoto ? (
+            <TouchableOpacity
+              activeOpacity={0.8}
+              style={styles.iconCamera}
+              onPress={() => {
+                setPost(prevState => ({
+                  ...prevState,
+                  photo: 'upload',
+                  id: postId,
+                  comments: 0,
+                  likes: 0,
+                }));
+                setIsLoadedPhoto(true);
+              }}
+            >
+              <FontAwesome name="camera" size={24} color="#BDBDBD" />
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity
+              activeOpacity={0.8}
+              style={{ ...styles.iconCamera, backgroundColor: '#FFFFFF4d' }}
+              onPress={() => {
+                setPost(prevState => ({ ...prevState, photo: '' }));
+                setIsLoadedPhoto(false);
+              }}
+            >
+              <FontAwesome name="camera" size={24} c color="#FFFFFF" />
+            </TouchableOpacity>
+          )}
+        </View>
+        {!isLoadedPhoto ? (
+          <Text style={styles.postInfo}>Upload photo</Text>
+        ) : (
+          <Text style={styles.postInfo}>Edit photo</Text>
+        )}
+        <View style={styles.postInputSet}>
+          <TextInput
+            style={styles.postInput}
+            placeholder="Post title..."
+            value={post.title}
+            onChangeText={value =>
+              setPost(prevState => ({ ...prevState, title: value }))
+            }
+          />
+          <View style={styles.postField}>
             <TextInput
-              style={styles.postInput}
-              placeholder="Post title..."
-              value={post.title}
+              style={{ ...styles.postInput, paddingLeft: 26 }}
+              placeholder="Location..."
+              value={post.location}
               onChangeText={value =>
-                setPost(prevState => ({ ...prevState, title: value }))
+                setPost(prevState => ({ ...prevState, location: value }))
               }
             />
-            <View style={styles.postField}>
-              <TextInput
-                style={{ ...styles.postInput, paddingLeft: 26 }}
-                placeholder="Location..."
-                value={post.location}
-                onChangeText={value =>
-                  setPost(prevState => ({ ...prevState, location: value }))
-                }
-              />
-              <Feather
-                name="map-pin"
-                size={22}
-                color="#BDBDBD"
-                style={styles.iconLocation}
-                onPress={() => navigation.navigate('MapScreen')}
-              />
-            </View>
+            <Feather
+              name="map-pin"
+              size={22}
+              color="#BDBDBD"
+              style={styles.iconLocation}
+              onPress={() => navigation.navigate('MapScreen')}
+            />
           </View>
-          {isLoadedPhoto ? (
-            <TouchableOpacity
-              activeOpacity={0.8}
-              style={styles.btnPublish}
-              onPress={handleSubmit}
-            >
-              <Text style={styles.btnTitle}>Publish</Text>
-            </TouchableOpacity>
-          ) : (
-            <TouchableOpacity
-              activeOpacity={0.8}
-              style={{
-                ...styles.btnPublish,
-                backgroundColor: '#F6F6F6',
-              }}
-              onPress={() => {
-                if (!isLoadedPhoto) {
-                  return Alert.alert('Please, upload your photo');
-                }
-              }}
-              // disabled
-            >
-              <Text style={{ ...styles.btnTitle, color: '#BDBDBD' }}>
-                Publish
-              </Text>
-            </TouchableOpacity>
-          )}
-        </KeyboardAvoidingView>
+        </View>
+        {isLoadedPhoto ? (
+          <TouchableOpacity
+            activeOpacity={0.8}
+            style={styles.btnPublish}
+            onPress={handleSubmit}
+          >
+            <Text style={styles.btnTitle}>Publish</Text>
+          </TouchableOpacity>
+        ) : (
+          <TouchableOpacity
+            activeOpacity={0.8}
+            style={{
+              ...styles.btnPublish,
+              backgroundColor: '#F6F6F6',
+            }}
+            onPress={() => {
+              if (!isLoadedPhoto) {
+                return Alert.alert('Please, upload your photo');
+              }
+            }}
+            // disabled
+          >
+            <Text style={{ ...styles.btnTitle, color: '#BDBDBD' }}>
+              Publish
+            </Text>
+          </TouchableOpacity>
+        )}
         <View style={{ ...styles.footer, width: width }}>
           <TouchableOpacity
             activeOpacity={0.8}
@@ -228,6 +225,7 @@ const styles = StyleSheet.create({
   },
   btnPublish: {
     height: 50,
+    marginBottom: 120,
     paddingVertical: 16,
     paddingHorizontal: 32,
     justifyContent: 'center',
@@ -255,22 +253,22 @@ const styles = StyleSheet.create({
     position: 'absolute',
     left: 0,
   },
+  footer: {
+    // position: 'absolute',
+    // bottom: 10,
+    height: 44,
+    paddingTop: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   iconDel: {
     width: 70,
     height: 40,
+    marginLeft: -32,
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 20,
     backgroundColor: '#F6F6F6',
-  },
-  footer: {
-    position: 'absolute',
-    bottom: 10,
-    height: 80,
-    // left: '50%',
-    // transform: [{ translateX: -50 }],
-    justifyContent: 'center',
-    alignItems: 'center',
   },
 });
 

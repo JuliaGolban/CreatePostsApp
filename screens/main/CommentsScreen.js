@@ -10,6 +10,7 @@ import {
   KeyboardAvoidingView,
   Keyboard,
   useWindowDimensions,
+  TouchableOpacity,
   Alert,
 } from 'react-native';
 import { v4 as uuidv4 } from 'uuid';
@@ -129,24 +130,20 @@ const CommentsScreen = ({ navigation, route }) => {
           }}
           placeholder="Comment..."
           value={comment.text}
-          onChangeText={value =>
-            setComment(prevState => ({
-              ...prevState,
-              text: value,
+          onChangeText={value => {
+            const newComment = {
               id: commentId,
+              text: value,
               data: dateNow,
               avatar: require('../../assets/images/avatar.jpg'),
               userOwn: true,
-            }))
-          }
+            };
+            setComment(prevState => [...prevState, newComment]);
+          }}
         />
-        <Ionicons
-          name="arrow-up-circle"
-          size={34}
-          color="#FF6C00"
-          style={styles.iconArrowUp}
-          onPress={handleSend}
-        />
+        <TouchableOpacity style={styles.iconArrowUp} onPress={handleSend}>
+          <Ionicons name="arrow-up-circle" size={34} color="#FF6C00" />
+        </TouchableOpacity>
       </View>
     );
   };
@@ -160,10 +157,11 @@ const CommentsScreen = ({ navigation, route }) => {
           ListHeaderComponentStyle={{ marginBottom: 32 }}
           // === comments ===
           data={comment}
-          keyExtractor={item => item.id}
+          // keyExtractor={item => item.id}
+          keyExtractor={(item, index) => index.toString()}
           renderItem={({ item }) => <Comment item={item} />}
           contentContainerStyle={{ flexGrow: 1 }}
-          // showsVerticalScrollIndicator={false}
+          showsVerticalScrollIndicator={false}
           // === input as footer ===
           ListFooterComponent={FlatList_Footer}
           ListFooterComponentStyle={{

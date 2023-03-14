@@ -6,17 +6,6 @@ import { CreatePostsScreen, PostsScreen, ProfileScreen } from '../screens';
 
 const MainTabs = createBottomTabNavigator();
 
-const LogOut = ({ navigation }) => {
-  return (
-    <MaterialIcons
-      name="logout"
-      size={24}
-      color="#BDBDBD"
-      onPress={() => navigation.navigate('Login')}
-    />
-  );
-};
-
 const TabBar = () => {
   return (
     <MainTabs.Navigator
