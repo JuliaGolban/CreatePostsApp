@@ -72,7 +72,7 @@ const ProfileScreen = ({ navigation, route }) => {
           <MaterialIcons
             name="logout"
             size={24}
-            color="#BDBDBD"
+            color="rgba(189, 189, 189, 1)"
             style={styles.btnLogout}
             onPress={() => navigation.navigate('Login')}
           />

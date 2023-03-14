@@ -1,30 +1,77 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons, Feather } from '@expo/vector-icons';
 import { StyleSheet, View } from 'react-native';
-
+import { MaterialIcons } from '@expo/vector-icons';
 import { CreatePostsScreen, PostsScreen, ProfileScreen } from '../screens';
 
 const MainTabs = createBottomTabNavigator();
+
+const LogOut = ({ navigation }) => {
+  return (
+    <MaterialIcons
+      name="logout"
+      size={24}
+      color="#BDBDBD"
+      onPress={() => navigation.navigate('Login')}
+    />
+  );
+};
 
 const TabBar = () => {
   return (
     <MainTabs.Navigator
       screenOptions={{
+        headerStyle: {
+          // height: 44,
+          // marginTop: 44,
+          // paddingHorizontal: 16,
+          // paddingVertical: 11,
+          height: 100,
+          backgroundColor: '#FFFFFF',
+          borderBottomColor: 'rgba(0, 0, 0, 0.3)',
+          borderBottomWidth: 0.5,
+          boxShadow: '0 0.5 0 rgba(0, 0, 0, 0.3)',
+        },
+        headerTitleStyle: {
+          fontFamily: 'Roboto-Medium',
+          fontWeight: '500',
+          fontSize: 17,
+          lineHeight: 22,
+          color: '#212121',
+        },
+        headerTitleAlign: 'center',
+        headerTitleContainerStyle: { marginBottom: 11 },
+        headerRightContainerStyle: { paddingRight: 16, paddingBottom: 10 },
+        headerLeftContainerStyle: { paddingLeft: 16, paddingBottom: 10 },
         tabBarShowLabel: false,
         tabBarStyle: {
+          height: 83,
+          paddingTop: 10,
+          paddingHorizontal: 80,
           display: 'flex',
           alignItems: 'center',
-          justifyContent: 'space-evenly',
-          height: 80,
-          paddingTop: 10,
+          justifyContent: 'space-between',
+          borderTopColor: 'rgba(0, 0, 0, 0.3)',
+          borderTopWidth: 0.5,
+          boxShadow: '0 -0.5 0 rgba(0, 0, 0, 0.3)',
         },
       }}
     >
       <MainTabs.Screen
         name="Posts"
         component={PostsScreen}
-        options={{
-          tabBarIcon: ({ focused, size, color }) => (
+        options={({ navigation }) => ({
+          headerShown: true,
+          headerTitle: 'Posts',
+          headerRight: () => (
+            <MaterialIcons
+              name="logout"
+              size={24}
+              color="rgba(189, 189, 189, 1)"
+              onPress={() => navigation.navigate('Login')}
+            />
+          ),
+          tabBarIcon: () => (
             <Ionicons
               name="grid-outline"
               size={24}
@@ -32,26 +79,44 @@ const TabBar = () => {
               style={styles.btnTab}
             />
           ),
-        }}
+        })}
       />
       <MainTabs.Screen
         name="CreatePosts"
         component={CreatePostsScreen}
-        options={{
-          tabBarHideOnKeyboard: true,
-          tabBarIcon: ({ focused, size, color }) => (
+        options={({ navigation }) => ({
+          headerShown: true,
+          headerTitle: 'Create post',
+          headerLeft: () => (
+            <MaterialIcons
+              name="keyboard-backspace"
+              size={24}
+              color="rgba(33, 33, 33, 0.8)"
+              onPress={() => navigation.navigate('Posts')}
+            />
+          ),
+          tabBarStyle: { display: 'none' },
+          tabBarIcon: () => (
             <View style={{ ...styles.btnTabWrap, backgroundColor: '#FF6C00' }}>
               <Ionicons name="add" size={24} color="#FFFFFF" />
             </View>
           ),
-        }}
+        })}
       />
       <MainTabs.Screen
         name="Profile"
         component={ProfileScreen}
-        options={{
+        options={({ navigation }) => ({
           headerShown: false,
-          tabBarIcon: ({ focused, size, color }) => (
+          headerRight: () => (
+            <MaterialIcons
+              name="logout"
+              size={24}
+              color="rgba(189, 189, 189, 1)"
+              onPress={() => navigation.navigate('Login')}
+            />
+          ),
+          tabBarIcon: () => (
             <Feather
               name="user"
               size={24}
@@ -59,7 +124,7 @@ const TabBar = () => {
               style={styles.btnTab}
             />
           ),
-        }}
+        })}
       />
     </MainTabs.Navigator>
   );

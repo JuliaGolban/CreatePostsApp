@@ -17,38 +17,42 @@ import { Ionicons } from '@expo/vector-icons';
 import Comment from '../../components/Comment';
 
 const initialState = [
+  // {
+  //   id: '2',
+  //   photo: require('../../assets/images/sunset.jpg'),
+  //   title: 'Sunset',
+  //   comments: 3,
+  //   likes: 200,
+  //   location: `Ukraine`,
+  //   commentList: [
+  {
+    id: '1',
+    userOwn: false,
+    avatar: require('../../assets/images/ellipse.png'),
+    text: 'Really love your most recent photo. I’ve been trying to capture the same thing for a few months and would love some tips!',
+    data: '09 june, 2020 | 08:40',
+  },
   {
     id: '2',
-    photo: require('../../assets/images/sunset.jpg'),
-    title: 'Sunset',
-    comments: 3,
-    likes: 200,
-    location: `Ukraine`,
-    commentList: [
-      {
-        id: '1',
-        avatar: require('../../assets/images/ellipse.png'),
-        text: 'Really love your most recent photo. I’ve been trying to capture the same thing for a few months and would love some tips!',
-        data: '09 june, 2020 | 08:40',
-      },
-      {
-        id: '2',
-        avatar: require('../../assets/images/avatar.jpg'),
-        text: 'A fast 50mm like f1.8 would help with the bokeh. I’ve been using primes as they tend to get a bit sharper images.',
-        data: '09 june, 2020 | 09:14',
-      },
-      {
-        id: '3',
-        avatar: require('../../assets/images/ellipse.png'),
-        text: 'Thank you! That was very helpful!',
-        data: '09 june, 2020 | 09:20',
-      },
-    ],
+    userOwn: true,
+    avatar: require('../../assets/images/avatar.jpg'),
+    text: 'A fast 50mm like f1.8 would help with the bokeh. I’ve been using primes as they tend to get a bit sharper images.',
+    data: '09 june, 2020 | 09:14',
   },
+  {
+    id: '3',
+    userOwn: false,
+    avatar: require('../../assets/images/ellipse.png'),
+    text: 'Thank you! That was very helpful!',
+    data: '09 june, 2020 | 09:20',
+  },
+  // ],
+  // },
 ];
 
 const initialStateComment = {
   id: '',
+  userOwn: true,
   avatar: '',
   text: '',
   data: '',
@@ -56,8 +60,9 @@ const initialStateComment = {
 
 const CommentsScreen = ({ navigation, route }) => {
   // const { post } = route.params;
-  const [posts, setPosts] = useState(initialState);
-  const [comment, setComment] = useState(initialStateComment);
+  // const [post, setPost] = useState(initialState);
+  // const [comment, setComment] = useState(initialStateComment);
+  const [comment, setComment] = useState(initialState);
   const { width } = useWindowDimensions();
 
   const commentId = uuidv4();
@@ -98,8 +103,8 @@ const CommentsScreen = ({ navigation, route }) => {
       return Alert.alert('Please, enter your comment');
     }
     console.log(comment);
-    console.log(posts);
     setComment(initialStateComment);
+    keyboardHide();
   };
 
   // === render headers and footers on screen ===
@@ -109,7 +114,7 @@ const CommentsScreen = ({ navigation, route }) => {
         style={{ ...styles.postPhoto, width: width - 16 * 2 }}
         alt="Post"
         source={require('../../assets/images/sunset.jpg')}
-        // source={posts.photo}
+        // source={post.photo}
       />
     );
   };
@@ -131,6 +136,7 @@ const CommentsScreen = ({ navigation, route }) => {
               id: commentId,
               data: dateNow,
               avatar: require('../../assets/images/avatar.jpg'),
+              userOwn: true,
             }))
           }
         />
@@ -146,28 +152,28 @@ const CommentsScreen = ({ navigation, route }) => {
   };
 
   return (
-    // <TouchableWithoutFeedback onPress={keyboardHide}>
-    <View style={styles.container}>
-      <FlatList
-        // === photo as header ===
-        ListHeaderComponent={FlatList_Header}
-        ListHeaderComponentStyle={{ marginBottom: 32 }}
-        // === comments ===
-        data={state.comment}
-        keyExtractor={item => item.id}
-        renderItem={({ item }) => <Comment item={item} />}
-        contentContainerStyle={{ flexGrow: 1 }}
-        // showsVerticalScrollIndicator={false}
-        // === input as footer ===
-        ListFooterComponent={FlatList_Footer}
-        ListFooterComponentStyle={{
-          flex: 1,
-          justifyContent: 'flex-end',
-          marginBottom: 16,
-        }}
-      />
-    </View>
-    // </TouchableWithoutFeedback>
+    <TouchableWithoutFeedback onPress={keyboardHide}>
+      <View style={styles.container}>
+        <FlatList
+          // === photo as header ===
+          ListHeaderComponent={FlatList_Header}
+          ListHeaderComponentStyle={{ marginBottom: 32 }}
+          // === comments ===
+          data={comment}
+          keyExtractor={item => item.id}
+          renderItem={({ item }) => <Comment item={item} />}
+          contentContainerStyle={{ flexGrow: 1 }}
+          // showsVerticalScrollIndicator={false}
+          // === input as footer ===
+          ListFooterComponent={FlatList_Footer}
+          ListFooterComponentStyle={{
+            flex: 1,
+            justifyContent: 'flex-end',
+            marginBottom: 16,
+          }}
+        />
+      </View>
+    </TouchableWithoutFeedback>
   );
 };
 
@@ -193,7 +199,7 @@ const styles = StyleSheet.create({
   input: {
     height: 50,
     padding: 16,
-    color: '#BDBDBD',
+    color: 'rgba(189, 189, 189, 1)',
     backgroundColor: '#F6F6F6',
     borderWidth: 1,
     borderColor: '#E8E8E8',
@@ -203,7 +209,7 @@ const styles = StyleSheet.create({
       fontWeight: '500',
       fontSize: 16,
       lineHeight: 19,
-      color: '#BDBDBD',
+      color: 'rgba(189, 189, 189, 1)',
     },
   },
   iconArrowUp: {

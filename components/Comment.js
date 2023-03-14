@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import {
   StyleSheet,
   View,
@@ -8,13 +7,34 @@ import {
 } from 'react-native';
 
 const Comment = ({ item }) => {
-  const { avatar, text, data } = item;
+  const { userOwn, avatar, text, data } = item;
   const { width } = useWindowDimensions();
 
   return (
-    <View style={styles.commentContainer}>
-      <Image style={styles.avatar} alt="user avatar" source={avatar} />
-      <View style={{ ...styles.commentWrap, width: width - 16 - 60 }}>
+    <View
+      style={{
+        ...styles.commentContainer,
+        flexDirection: userOwn ? 'row-reverse' : 'row',
+      }}
+    >
+      <Image
+        style={{
+          ...styles.avatar,
+          marginLeft: userOwn ? 16 : 0,
+          marginRight: userOwn ? 0 : 16,
+        }}
+        alt="user avatar"
+        source={avatar}
+      />
+      <View
+        style={{
+          ...styles.commentWrap,
+          width: width - 16 - 60,
+          borderTopLeftRadius: userOwn ? 6 : 0,
+          borderTopRightRadius: userOwn ? 0 : 6,
+          borderRadius: 6,
+        }}
+      >
         <Text style={styles.text}>{text}</Text>
         <Text style={styles.data}>{data}</Text>
       </View>
@@ -28,32 +48,38 @@ const styles = StyleSheet.create({
   commentContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
-    marginBottom: 78,
   },
   avatar: {
     resizeMode: 'cover',
     justifyContent: 'flex-end',
     alignItems: 'center',
-    width: 60,
-    height: 60,
+    width: 28,
+    height: 28,
     backgroundColor: '#F6F6F6',
     borderRadius: 16,
   },
-  commentWrap: {},
+  commentWrap: {
+    marginBottom: 24,
+    padding: 16,
+    justifyContent: 'space-between',
+    backgroundColor: 'rgba(0, 0, 0, 0.03)',
+    borderRadius: '0px 6px 6px 6px',
+  },
   text: {
+    marginBottom: 6,
     fontFamily: 'Roboto-Regular',
     fontWeight: '400',
-    fontSize: 16,
-    lineHeight: 19,
-    textAlign: 'center',
-    color: '#1B4371',
+    fontSize: 13,
+    lineHeight: 18,
+    textAlign: 'left',
+    color: '#212121',
   },
   data: {
     fontFamily: 'Roboto-Regular',
     fontWeight: '400',
-    fontSize: 16,
-    lineHeight: 19,
-    textAlign: 'center',
-    color: '#1B4371',
+    fontSize: 10,
+    lineHeight: 12,
+    textAlign: 'right',
+    color: '#BDBDBD',
   },
 });

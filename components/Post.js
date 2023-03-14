@@ -32,7 +32,7 @@ const Post = ({ item, navigation }) => {
             <TouchableOpacity
               activeOpacity={0.8}
               style={{ ...styles.postIconWrap, marginRight: 24 }}
-              onPress={() => navigation.navigate('Comments')}
+              onPress={() => navigation.navigate('Comments', { post: item })}
             >
               <Feather
                 name="message-circle"
