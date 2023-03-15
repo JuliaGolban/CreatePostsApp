@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { useFonts } from 'expo-font';
-import { useRoute } from './router';
+import { useRoute } from './navigations/router';
 
 export default function App() {
   const routing = useRoute(true);

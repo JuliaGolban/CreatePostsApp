@@ -16,6 +16,7 @@ import {
 import { v4 as uuidv4 } from 'uuid';
 import { Ionicons } from '@expo/vector-icons';
 import Comment from '../../components/Comment';
+import COLORS from '../../utils/colors';
 
 const initialState = [
   // {
@@ -109,7 +110,7 @@ const CommentsScreen = ({ navigation, route }) => {
   };
 
   // === render headers and footers on screen ===
-  const FlatList_Header = () => {
+  const PostPhoto = () => {
     return (
       <Image
         style={{ ...styles.postPhoto, width: width - 16 * 2 }}
@@ -120,7 +121,7 @@ const CommentsScreen = ({ navigation, route }) => {
     );
   };
 
-  const FlatList_Footer = () => {
+  const CreateComment = () => {
     return (
       <View style={styles.fieldComment}>
         <TextInput
@@ -142,7 +143,7 @@ const CommentsScreen = ({ navigation, route }) => {
           }}
         />
         <TouchableOpacity style={styles.iconArrowUp} onPress={handleSend}>
-          <Ionicons name="arrow-up-circle" size={34} color="#FF6C00" />
+          <Ionicons name="arrow-up-circle" size={34} color={COLORS.accent} />
         </TouchableOpacity>
       </View>
     );
@@ -153,7 +154,7 @@ const CommentsScreen = ({ navigation, route }) => {
       <View style={styles.container}>
         <FlatList
           // === photo as header ===
-          ListHeaderComponent={FlatList_Header}
+          ListHeaderComponent={PostPhoto}
           ListHeaderComponentStyle={{ marginBottom: 32 }}
           // === comments ===
           data={comment}
@@ -163,7 +164,7 @@ const CommentsScreen = ({ navigation, route }) => {
           contentContainerStyle={{ flexGrow: 1 }}
           showsVerticalScrollIndicator={false}
           // === input as footer ===
-          ListFooterComponent={FlatList_Footer}
+          ListFooterComponent={CreateComment}
           ListFooterComponentStyle={{
             flex: 1,
             justifyContent: 'flex-end',
@@ -180,7 +181,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingTop: 32,
     paddingHorizontal: 16,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: COLORS.white,
   },
   postPhoto: {
     height: 240,
@@ -188,7 +189,7 @@ const styles = StyleSheet.create({
     resizeMode: 'cover',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#F6F6F6',
+    backgroundColor: COLORS.grey_bgColor,
     borderRadius: 8,
   },
   fieldComment: {
@@ -197,17 +198,17 @@ const styles = StyleSheet.create({
   input: {
     height: 50,
     padding: 16,
-    color: 'rgba(189, 189, 189, 1)',
-    backgroundColor: '#F6F6F6',
+    color: COLORS.grey_colorText,
+    backgroundColor: COLORS.grey_bgColor,
     borderWidth: 1,
-    borderColor: '#E8E8E8',
+    borderColor: COLORS.grey_colorBorder,
     borderRadius: 100,
     placeholder: {
       fontFamily: 'Roboto-Medium',
       fontWeight: '500',
       fontSize: 16,
       lineHeight: 19,
-      color: 'rgba(189, 189, 189, 1)',
+      color: COLORS.grey_colorText,
     },
   },
   iconArrowUp: {

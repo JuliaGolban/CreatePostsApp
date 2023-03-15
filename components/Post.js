@@ -7,6 +7,7 @@ import {
   useWindowDimensions,
 } from 'react-native';
 import { Feather } from '@expo/vector-icons';
+import COLORS from '../utils/colors';
 
 const Post = ({ item, navigation }) => {
   const { title, photo, comments, likes, location } = item;
@@ -21,7 +22,7 @@ const Post = ({ item, navigation }) => {
       />
       <Text style={styles.postTitle}>{title}</Text>
       <View style={styles.postIconContainer}>
-        {comments !== 0 || likes !== 0 ? (
+        {comments != 0 || likes != 0 ? (
           <View
             style={{
               flexDirection: 'row',
@@ -37,7 +38,7 @@ const Post = ({ item, navigation }) => {
               <Feather
                 name="message-circle"
                 size={20}
-                color="#FF6C00"
+                color={COLORS.accent}
                 style={styles.postIcon}
               />
               <Text style={styles.postIconLabel}>{comments}</Text>
@@ -46,7 +47,7 @@ const Post = ({ item, navigation }) => {
               <Feather
                 name="thumbs-up"
                 size={20}
-                color="#FF6C00"
+                color={COLORS.accent}
                 style={styles.postIcon}
               />
               <Text style={styles.postIconLabel}>{likes}</Text>
@@ -61,7 +62,7 @@ const Post = ({ item, navigation }) => {
             <Feather
               name="message-circle"
               size={20}
-              color="#BDBDBD"
+              color={COLORS.grey_colorText}
               style={styles.postIcon}
             />
             <Text style={styles.postIconLabel}>{comments}</Text>
@@ -75,7 +76,7 @@ const Post = ({ item, navigation }) => {
           <Feather
             name="map-pin"
             size={20}
-            color="#BDBDBD"
+            color={COLORS.grey_colorText}
             style={styles.postIcon}
           />
           <Text style={styles.postIconLabel}>{location}</Text>
@@ -98,7 +99,7 @@ const styles = StyleSheet.create({
     resizeMode: 'cover',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#F6F6F6',
+    backgroundColor: COLORS.grey_bgColor,
     borderRadius: 8,
   },
   postTitle: {
@@ -108,7 +109,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     lineHeight: 19,
     textAlign: 'left',
-    color: '#212121',
+    color: COLORS.black_colorText,
   },
   postIconContainer: {
     flexDirection: 'row',
@@ -127,6 +128,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     lineHeight: 19,
     textAlign: 'left',
-    color: '#212121',
+    color: COLORS.black_colorText,
   },
 });

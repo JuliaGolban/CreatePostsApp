@@ -15,6 +15,7 @@ import {
   Alert,
 } from 'react-native';
 import { AntDesign, Octicons } from '@expo/vector-icons';
+import COLORS from '../../utils/colors';
 
 const initialState = {
   login: '',
@@ -93,7 +94,7 @@ const RegistrationScreen = ({ navigation }) => {
                     <AntDesign
                       name="closecircleo"
                       size={25}
-                      color="#E8E8E8"
+                      color={COLORS.grey_colorBorder}
                       style={styles.btnAdd}
                     />
                   ) : (
@@ -111,7 +112,9 @@ const RegistrationScreen = ({ navigation }) => {
                 style={{
                   ...styles.input,
                   borderColor:
-                    isFocusedInput === 'login' ? '#FF6C00' : '#E8E8E8',
+                    isFocusedInput === 'login'
+                      ? COLORS.accent
+                      : COLORS.grey_colorBorder,
                 }}
                 placeholder="Login"
                 value={state.login}
@@ -127,7 +130,9 @@ const RegistrationScreen = ({ navigation }) => {
                   ...styles.input,
                   marginTop: 16,
                   borderColor:
-                    isFocusedInput === 'email' ? '#FF6C00' : '#E8E8E8',
+                    isFocusedInput === 'email'
+                      ? COLORS.accent
+                      : COLORS.grey_colorBorder,
                 }}
                 placeholder="Email address"
                 value={state.email}
@@ -143,7 +148,9 @@ const RegistrationScreen = ({ navigation }) => {
                   style={{
                     ...styles.input,
                     borderColor:
-                      isFocusedInput === 'password' ? '#FF6C00' : '#E8E8E8',
+                      isFocusedInput === 'password'
+                        ? COLORS.accent
+                        : COLORS.grey_colorBorder,
                   }}
                   placeholder="Password"
                   value={state.password}
@@ -200,7 +207,7 @@ const RegistrationScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#E5E5E5',
+    backgroundColor: COLORS.grey_bgColor,
   },
   backgroundImage: {
     flex: 1,
@@ -211,7 +218,7 @@ const styles = StyleSheet.create({
   form: {
     paddingHorizontal: 16,
     columnGap: 16,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: COLORS.white,
     borderTopLeftRadius: 25,
     borderTopRightRadius: 25,
   },
@@ -228,7 +235,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: 120,
     height: 120,
-    backgroundColor: '#F6F6F6',
+    backgroundColor: COLORS.grey_bgColor,
     borderRadius: 16,
   },
   btnAdd: {
@@ -241,7 +248,7 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#FFFFFF',
+    backgroundColor: COLORS.white,
   },
   title: {
     marginTop: 52,
@@ -251,22 +258,22 @@ const styles = StyleSheet.create({
     fontSize: 30,
     lineHeight: 35,
     textAlign: 'center',
-    color: '#212121',
+    color: COLORS.black_colorText,
   },
   input: {
     height: 50,
     padding: 16,
-    color: '#212121',
-    backgroundColor: '#F6F6F6',
+    color: COLORS.black_colorText,
+    backgroundColor: COLORS.grey_bgColor,
     borderWidth: 1,
-    borderColor: '#E8E8E8',
+    borderColor: COLORS.grey_colorBorder,
     borderRadius: 8,
     placeholder: {
       fontFamily: 'Roboto-Regular',
       fontWeight: '400',
       fontSize: 16,
       lineHeight: 19,
-      color: '#BDBDBD',
+      color: COLORS.grey_colorText,
     },
   },
   fieldPassword: {
@@ -276,7 +283,7 @@ const styles = StyleSheet.create({
   iconShow: {
     position: 'absolute',
     right: 15,
-    color: '#BDBDBD',
+    color: COLORS.grey_colorText,
   },
   btn: {
     marginHorizontal: 20,
@@ -287,7 +294,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 32,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#FF6C00',
+    backgroundColor: COLORS.accent,
     borderRadius: 100,
   },
   btnTitle: {
@@ -296,7 +303,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     lineHeight: 19,
     textAlign: 'center',
-    color: '#FFFFFF',
+    color: COLORS.white,
   },
   linkWrap: {
     flexDirection: 'row',
@@ -309,7 +316,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     lineHeight: 19,
     textAlign: 'center',
-    color: '#1B4371',
+    color: COLORS.blue_link,
   },
 });
 

@@ -16,6 +16,7 @@ import {
 import { FontAwesome, Feather } from '@expo/vector-icons';
 import 'react-native-get-random-values';
 import { v4 as uuidv4 } from 'uuid';
+import COLORS from '../../utils/colors';
 
 const initialState = {
   id: '',
@@ -42,6 +43,27 @@ const CreatePostsScreen = ({ navigation }) => {
     setIsLoadedPhoto(false);
   };
 
+  const handleCreatePhoto = () => {
+    setPost(prevState => ({
+      ...prevState,
+      photo: 'upload',
+      id: postId,
+      comments: 0,
+      likes: 0,
+    }));
+    setIsLoadedPhoto(true);
+  };
+
+  const handleDeletePhoto = () => {
+    setPost(prevState => ({ ...prevState, photo: '' }));
+    setIsLoadedPhoto(false);
+  };
+
+  const reset = () => {
+    setPost(initialState);
+    setIsLoadedPhoto(false);
+  };
+
   return (
     <TouchableWithoutFeedback onPress={keyboardHide}>
       <View style={styles.container}>
@@ -62,29 +84,24 @@ const CreatePostsScreen = ({ navigation }) => {
             <TouchableOpacity
               activeOpacity={0.8}
               style={styles.iconCamera}
-              onPress={() => {
-                setPost(prevState => ({
-                  ...prevState,
-                  photo: 'upload',
-                  id: postId,
-                  comments: 0,
-                  likes: 0,
-                }));
-                setIsLoadedPhoto(true);
-              }}
+              onPress={handleCreatePhoto}
             >
-              <FontAwesome name="camera" size={24} color="#BDBDBD" />
+              <FontAwesome
+                name="camera"
+                size={24}
+                color={COLORS.grey_colorText}
+              />
             </TouchableOpacity>
           ) : (
             <TouchableOpacity
               activeOpacity={0.8}
-              style={{ ...styles.iconCamera, backgroundColor: '#FFFFFF4d' }}
-              onPress={() => {
-                setPost(prevState => ({ ...prevState, photo: '' }));
-                setIsLoadedPhoto(false);
+              style={{
+                ...styles.iconCamera,
+                backgroundColor: COLORS.white_opacity_30,
               }}
+              onPress={handleDeletePhoto}
             >
-              <FontAwesome name="camera" size={24} c color="#FFFFFF" />
+              <FontAwesome name="camera" size={24} c color={COLORS.white} />
             </TouchableOpacity>
           )}
         </View>
@@ -114,7 +131,7 @@ const CreatePostsScreen = ({ navigation }) => {
             <Feather
               name="map-pin"
               size={22}
-              color="#BDBDBD"
+              color={COLORS.grey_colorText}
               style={styles.iconLocation}
               onPress={() => navigation.navigate('MapScreen')}
             />
@@ -133,7 +150,7 @@ const CreatePostsScreen = ({ navigation }) => {
             activeOpacity={0.8}
             style={{
               ...styles.btnPublish,
-              backgroundColor: '#F6F6F6',
+              backgroundColor: COLORS.grey_bgColor,
             }}
             onPress={() => {
               if (!isLoadedPhoto) {
@@ -142,7 +159,7 @@ const CreatePostsScreen = ({ navigation }) => {
             }}
             // disabled
           >
-            <Text style={{ ...styles.btnTitle, color: '#BDBDBD' }}>
+            <Text style={{ ...styles.btnTitle, color: COLORS.grey_colorText }}>
               Publish
             </Text>
           </TouchableOpacity>
@@ -151,12 +168,9 @@ const CreatePostsScreen = ({ navigation }) => {
           <TouchableOpacity
             activeOpacity={0.8}
             style={styles.iconDel}
-            onPress={() => {
-              setPost(initialState);
-              setIsLoadedPhoto(false);
-            }}
+            onPress={reset}
           >
-            <Feather name="trash-2" size={24} color="#BDBDBD" />
+            <Feather name="trash-2" size={24} color={COLORS.grey_colorText} />
           </TouchableOpacity>
         </View>
       </View>
@@ -169,7 +183,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingTop: 32,
     paddingHorizontal: 16,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: COLORS.white,
   },
   photoWrapper: {
     justifyContent: 'center',
@@ -181,7 +195,7 @@ const styles = StyleSheet.create({
     resizeMode: 'cover',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#F6F6F6',
+    backgroundColor: COLORS.grey_bgColor,
     borderRadius: 8,
   },
   postInfo: {
@@ -191,7 +205,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     lineHeight: 19,
     textAlign: 'left',
-    color: '#BDBDBD',
+    color: COLORS.grey_colorText,
   },
   postInputSet: {
     marginVertical: 32,
@@ -206,31 +220,31 @@ const styles = StyleSheet.create({
     height: 50,
     width: '100%',
     borderBottomWidth: 1,
-    borderBottomColor: '#E8E8E8',
+    borderBottomColor: COLORS.grey_colorBorder,
     borderRadius: 5,
     fontFamily: 'Roboto-Regular',
     fontWeight: '400',
     fontSize: 16,
     lineHeight: 19,
     textAlign: 'left',
-    color: '#212121',
+    color: COLORS.black_colorText,
     placeholder: {
       fontFamily: 'Roboto-Regular',
       fontWeight: '400',
       fontSize: 16,
       lineHeight: 19,
       textAlign: 'left',
-      color: '#BDBDBD',
+      color: COLORS.grey_colorText,
     },
   },
   btnPublish: {
     height: 50,
-    marginBottom: 120,
+    marginBottom: 150,
     paddingVertical: 16,
     paddingHorizontal: 32,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#FF6C00',
+    backgroundColor: COLORS.accent,
     borderRadius: 100,
   },
   btnTitle: {
@@ -238,7 +252,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     lineHeight: 19,
     textAlign: 'center',
-    color: '#FFFFFF',
+    color: COLORS.white,
   },
   iconCamera: {
     position: 'absolute',
@@ -246,7 +260,7 @@ const styles = StyleSheet.create({
     width: 60,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#FFFFFF',
+    backgroundColor: COLORS.white,
     borderRadius: 100,
   },
   iconLocation: {
@@ -268,7 +282,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 20,
-    backgroundColor: '#F6F6F6',
+    backgroundColor: COLORS.grey_bgColor,
   },
 });
 

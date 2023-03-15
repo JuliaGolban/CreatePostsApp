@@ -14,6 +14,7 @@ import {
   Alert,
 } from 'react-native';
 import { Octicons } from '@expo/vector-icons';
+import COLORS from '../../utils/colors';
 
 const initialState = {
   email: '',
@@ -75,7 +76,9 @@ const LoginScreen = ({ navigation }) => {
                 style={{
                   ...styles.input,
                   borderColor:
-                    isFocusedInput === 'email' ? '#FF6C00' : '#E8E8E8',
+                    isFocusedInput === 'email'
+                      ? COLORS.accent
+                      : COLORS.grey_colorBorder,
                 }}
                 placeholder="Email address"
                 value={state.email}
@@ -94,7 +97,9 @@ const LoginScreen = ({ navigation }) => {
                   style={{
                     ...styles.input,
                     borderColor:
-                      isFocusedInput === 'password' ? '#FF6C00' : '#E8E8E8',
+                      isFocusedInput === 'password'
+                        ? COLORS.accent
+                        : COLORS.grey_colorText,
                   }}
                   placeholder="Password"
                   value={state.password}
@@ -154,7 +159,7 @@ const LoginScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#E5E5E5',
+    backgroundColor: COLORS.grey_bgColor,
   },
   backgroundImage: {
     flex: 1,
@@ -164,7 +169,7 @@ const styles = StyleSheet.create({
   },
   form: {
     paddingHorizontal: 16,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: COLORS.white,
     borderTopLeftRadius: 25,
     borderTopRightRadius: 25,
   },
@@ -176,21 +181,21 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     lineHeight: 35,
     textAlign: 'center',
-    color: '#212121',
+    color: COLORS.black_colorText,
   },
   input: {
     height: 50,
     padding: 16,
-    color: '#212121',
-    backgroundColor: '#F6F6F6',
+    color: COLORS.black_colorText,
+    backgroundColor: COLORS.grey_bgColor,
     borderWidth: 1,
-    borderColor: '#E8E8E8',
+    borderColor: COLORS.grey_colorText,
     borderRadius: 8,
     placeholder: {
       fontFamily: 'Roboto-Regular',
       fontSize: 16,
       lineHeight: 19,
-      color: '#BDBDBD',
+      color: COLORS.grey_colorText,
     },
   },
   fieldPassword: {
@@ -200,7 +205,7 @@ const styles = StyleSheet.create({
   iconShow: {
     position: 'absolute',
     right: 15,
-    color: '#BDBDBD',
+    color: COLORS.grey_colorText,
   },
   btn: {
     marginTop: 43,
@@ -211,7 +216,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 32,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#FF6C00',
+    backgroundColor: COLORS.accent,
     borderRadius: 100,
   },
   btnTitle: {
@@ -219,7 +224,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     lineHeight: 19,
     textAlign: 'center',
-    color: '#FFFFFF',
+    color: COLORS.white,
   },
   linkWrap: {
     flexDirection: 'row',
@@ -232,7 +237,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     lineHeight: 19,
     textAlign: 'center',
-    color: '#1B4371',
+    color: COLORS.blue_link,
   },
 });
 

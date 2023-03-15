@@ -13,6 +13,7 @@ import {
 } from 'react-native';
 import { AntDesign, MaterialIcons } from '@expo/vector-icons';
 import Post from '../../components/Post';
+import COLORS from '../../utils/colors';
 
 const initialState = [
   {
@@ -72,7 +73,7 @@ const ProfileScreen = ({ navigation, route }) => {
           <MaterialIcons
             name="logout"
             size={24}
-            color="rgba(189, 189, 189, 1)"
+            color={COLORS.grey_colorText}
             style={styles.btnLogout}
             onPress={() => navigation.navigate('Login')}
           />
@@ -88,14 +89,14 @@ const ProfileScreen = ({ navigation, route }) => {
                 <AntDesign
                   name="closecircleo"
                   size={25}
-                  color="#E8E8E8"
+                  color={COLORS.grey_colorBorder}
                   style={styles.btnAdd}
                 />
               ) : (
                 <AntDesign
                   name="pluscircleo"
                   size={25}
-                  color="#FF6C00"
+                  color={COLORS.accent}
                   style={styles.btnAdd}
                 />
               )}
@@ -119,7 +120,7 @@ const ProfileScreen = ({ navigation, route }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#E5E5E5',
+    backgroundColor: COLORS.grey_bgColor,
   },
   backgroundImage: {
     flex: 1,
@@ -131,7 +132,7 @@ const styles = StyleSheet.create({
     marginTop: 310,
     paddingHorizontal: 16,
     columnGap: 16,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: COLORS.white,
     borderTopLeftRadius: 25,
     borderTopRightRadius: 25,
   },
@@ -151,7 +152,7 @@ const styles = StyleSheet.create({
     resizeMode: 'cover',
     justifyContent: 'flex-end',
     alignItems: 'center',
-    backgroundColor: '#F6F6F6',
+    backgroundColor: COLORS.grey_bgColor,
     borderRadius: 16,
   },
   btnAdd: {
@@ -164,7 +165,7 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#FFFFFF',
+    backgroundColor: COLORS.white,
   },
   login: {
     marginTop: 92,
@@ -174,7 +175,7 @@ const styles = StyleSheet.create({
     fontSize: 30,
     lineHeight: 35,
     textAlign: 'center',
-    color: '#212121',
+    color: COLORS.black_colorText,
   },
 });
 

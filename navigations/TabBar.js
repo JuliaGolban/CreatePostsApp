@@ -3,6 +3,7 @@ import { Ionicons, Feather } from '@expo/vector-icons';
 import { StyleSheet, View } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { CreatePostsScreen, PostsScreen, ProfileScreen } from '../screens';
+import COLORS from '../utils/colors';
 
 const MainTabs = createBottomTabNavigator();
 
@@ -16,7 +17,7 @@ const TabBar = () => {
           // paddingHorizontal: 16,
           // paddingVertical: 11,
           height: 100,
-          backgroundColor: '#FFFFFF',
+          backgroundColor: COLORS.white,
           borderBottomColor: 'rgba(0, 0, 0, 0.3)',
           borderBottomWidth: 0.5,
           boxShadow: '0 0.5 0 rgba(0, 0, 0, 0.3)',
@@ -26,7 +27,7 @@ const TabBar = () => {
           fontWeight: '500',
           fontSize: 17,
           lineHeight: 22,
-          color: '#212121',
+          color: COLORS.black_colorText,
         },
         headerTitleAlign: 'center',
         headerTitleContainerStyle: { marginBottom: 11 },
@@ -56,7 +57,7 @@ const TabBar = () => {
             <MaterialIcons
               name="logout"
               size={24}
-              color="rgba(189, 189, 189, 1)"
+              color={COLORS.grey_colorText}
               onPress={() => navigation.navigate('Login')}
             />
           ),
@@ -64,7 +65,7 @@ const TabBar = () => {
             <Ionicons
               name="grid-outline"
               size={24}
-              color="#212121"
+              color={COLORS.black_colorText}
               style={styles.btnTab}
             />
           ),
@@ -80,14 +81,19 @@ const TabBar = () => {
             <MaterialIcons
               name="keyboard-backspace"
               size={24}
-              color="rgba(33, 33, 33, 0.8)"
+              color={COLORS.black_opacity_80}
               onPress={() => navigation.navigate('Posts')}
             />
           ),
           tabBarStyle: { display: 'none' },
           tabBarIcon: () => (
-            <View style={{ ...styles.btnTabWrap, backgroundColor: '#FF6C00' }}>
-              <Ionicons name="add" size={24} color="#FFFFFF" />
+            <View
+              style={{
+                ...styles.btnTabWrap,
+                backgroundColor: COLORS.accent,
+              }}
+            >
+              <Ionicons name="add" size={24} color={COLORS.white} />
             </View>
           ),
         })}
@@ -101,7 +107,7 @@ const TabBar = () => {
             <MaterialIcons
               name="logout"
               size={24}
-              color="rgba(189, 189, 189, 1)"
+              color={COLORS.grey_colorText}
               onPress={() => navigation.navigate('Login')}
             />
           ),
@@ -109,7 +115,7 @@ const TabBar = () => {
             <Feather
               name="user"
               size={24}
-              color="#212121"
+              color={COLORS.black_colorText}
               style={styles.btnTab}
             />
           ),
@@ -127,7 +133,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-evenly',
     alignItems: 'center',
     borderTopWidth: 1,
-    borderTopColor: '#F6F6F6',
+    borderTopColor: COLORS.grey_bgColor,
   },
   btnTab: { opacity: 0.8 },
   btnTabWrap: {

@@ -5,6 +5,7 @@ import {
   Image,
   useWindowDimensions,
 } from 'react-native';
+import COLORS from '../utils/colors';
 
 const Comment = ({ item }) => {
   const { userOwn, avatar, text, data } = item;
@@ -55,7 +56,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: 28,
     height: 28,
-    backgroundColor: '#F6F6F6',
+    backgroundColor: COLORS.grey_bgColor,
     borderRadius: 16,
   },
   commentWrap: {
@@ -72,7 +73,7 @@ const styles = StyleSheet.create({
     fontSize: 13,
     lineHeight: 18,
     textAlign: 'left',
-    color: '#212121',
+    color: COLORS.black_colorText,
   },
   data: {
     fontFamily: 'Roboto-Regular',
@@ -80,6 +81,6 @@ const styles = StyleSheet.create({
     fontSize: 10,
     lineHeight: 12,
     textAlign: 'right',
-    color: '#BDBDBD',
+    color: COLORS.grey_colorText,
   },
 });

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, Text, Image, FlatList } from 'react-native';
 import Post from '../../components/Post';
+import COLORS from '../../utils/colors';
 
 const initialState = [
   {
@@ -45,8 +46,8 @@ const PostsScreen = ({ navigation, route }) => {
       </View>
       <FlatList
         data={posts}
-        keyExtractor={item => item.id}
-        // keyExtractor={(item, index) => index.toString()}
+        // keyExtractor={item => item.id}
+        keyExtractor={(item, index) => index.toString()}
         renderItem={({ item }) => <Post item={item} navigation={navigation} />}
       />
     </View>
@@ -58,7 +59,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingTop: 32,
     paddingHorizontal: 16,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: COLORS.white,
   },
   userBox: {
     marginBottom: 32,
@@ -72,7 +73,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: 60,
     height: 60,
-    backgroundColor: '#F6F6F6',
+    backgroundColor: COLORS.grey_bgColor,
     borderRadius: 16,
   },
   credentials: {
@@ -84,7 +85,7 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     lineHeight: 15,
     textAlign: 'left',
-    color: '#212121',
+    color: COLORS.black_colorText,
   },
   email: {
     fontFamily: 'Roboto-Regular',
@@ -92,7 +93,7 @@ const styles = StyleSheet.create({
     fontWeight: '400',
     lineHeight: 13,
     textAlign: 'left',
-    color: '#212121',
+    color: COLORS.black_colorText,
     opacity: 0.8,
   },
   postBox: {
@@ -105,7 +106,7 @@ const styles = StyleSheet.create({
     resizeMode: 'cover',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#F6F6F6',
+    backgroundColor: COLORS.grey_bgColor,
     borderRadius: 8,
   },
   postTitle: {
@@ -114,7 +115,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     lineHeight: 19,
     textAlign: 'left',
-    color: '#212121',
+    color: COLORS.black_colorText,
   },
   postIcon: { marginRight: 6 },
   postIconLabel: {
@@ -123,7 +124,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     lineHeight: 19,
     textAlign: 'left',
-    color: '#212121',
+    color: COLORS.black_colorText,
   },
 });
 

@@ -1,8 +1,7 @@
 import React from 'react';
-import TabBar from '../../components/TabBar';
+import TabBar from '../../navigations/TabBar';
 
 const Home = ({ navigation, route }) => {
-  // const { user } = route.params;
   return <TabBar />;
 };
 
