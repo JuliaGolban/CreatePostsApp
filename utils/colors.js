@@ -8,7 +8,7 @@ const COLORS = {
   grey_bgColor: '#F6F6F6',
   grey_colorText: '#BDBDBD',
   grey_colorBorder: '#E8E8E8',
-  blue_link: '1B4371',
+  blue_link: '#1B4371',
 };
 
 export default COLORS;

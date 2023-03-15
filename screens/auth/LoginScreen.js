@@ -99,7 +99,7 @@ const LoginScreen = ({ navigation }) => {
                     borderColor:
                       isFocusedInput === 'password'
                         ? COLORS.accent
-                        : COLORS.grey_colorText,
+                        : COLORS.grey_colorBorder,
                   }}
                   placeholder="Password"
                   value={state.password}

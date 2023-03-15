@@ -1,10 +1,10 @@
 import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
-import { RegistrationScreen, LoginScreen, Home } from '../screens';
+import { RegistrationScreen, LoginScreen } from '../screens';
 
 const AuthStack = createStackNavigator();
 
-export const AuthStackNav = isAuth => {
+export const AuthStackNav = () => {
   return (
     <AuthStack.Navigator initialRouteName="Registration">
       <AuthStack.Screen
