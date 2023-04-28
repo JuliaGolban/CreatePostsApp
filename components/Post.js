@@ -11,7 +11,7 @@ import COLORS from '../utils/colors';
 
 const Post = ({ item, navigation }) => {
   const { title, photo, comments, likes, location } = item;
-  const { height, width } = useWindowDimensions();
+  const { width } = useWindowDimensions();
 
   return (
     <View style={styles.postWrapper}>
@@ -22,7 +22,7 @@ const Post = ({ item, navigation }) => {
       />
       <Text style={styles.postTitle}>{title}</Text>
       <View style={styles.postIconContainer}>
-        {comments != 0 || likes != 0 ? (
+        {comments !== 0 || likes !== 0 ? (
           <View
             style={{
               flexDirection: 'row',

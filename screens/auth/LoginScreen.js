@@ -45,7 +45,7 @@ const LoginScreen = ({ navigation }) => {
       return Alert.alert('Please, enter your credentials');
     }
     console.log(state);
-    // navigation.navigate('Home', { user: state });
+    // navigation.navigate('Home', user: state);
     setState(initialState);
   };
 

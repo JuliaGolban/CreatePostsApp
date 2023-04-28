@@ -46,8 +46,7 @@ const PostsScreen = ({ navigation, route }) => {
       </View>
       <FlatList
         data={posts}
-        // keyExtractor={item => item.id}
-        keyExtractor={(item, index) => index.toString()}
+        keyExtractor={item => item.id}
         renderItem={({ item }) => <Post item={item} navigation={navigation} />}
       />
     </View>

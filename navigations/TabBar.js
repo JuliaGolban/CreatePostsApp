@@ -16,7 +16,7 @@ const TabBar = () => {
           // marginTop: 44,
           // paddingHorizontal: 16,
           // paddingVertical: 11,
-          height: 100,
+          height: 90,
           backgroundColor: COLORS.white,
           borderBottomColor: 'rgba(0, 0, 0, 0.3)',
           borderBottomWidth: 0.5,

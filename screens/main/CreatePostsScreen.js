@@ -38,7 +38,7 @@ const CreatePostsScreen = ({ navigation }) => {
 
   const handleSubmit = () => {
     console.log(post);
-    navigation.navigate('Posts', { post });
+    navigation.navigate('Posts', post);
     setPost(initialState);
     setIsLoadedPhoto(false);
   };

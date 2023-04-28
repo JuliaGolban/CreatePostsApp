@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   StyleSheet,
   View,
@@ -19,14 +19,6 @@ import Comment from '../../components/Comment';
 import COLORS from '../../utils/colors';
 
 const initialState = [
-  // {
-  //   id: '2',
-  //   photo: require('../../assets/images/sunset.jpg'),
-  //   title: 'Sunset',
-  //   comments: 3,
-  //   likes: 200,
-  //   location: `Ukraine`,
-  //   commentList: [
   {
     id: '1',
     userOwn: false,
@@ -48,31 +40,27 @@ const initialState = [
     text: 'Thank you! That was very helpful!',
     data: '09 june, 2020 | 09:20',
   },
-  // ],
-  // },
 ];
 
 const initialStateComment = {
   id: '',
   userOwn: true,
-  avatar: '',
+  avatar: require('../../assets/images/avatar.jpg'),
   text: '',
   data: '',
 };
 
 const CommentsScreen = ({ navigation, route }) => {
   // const { post } = route.params;
-  // const [post, setPost] = useState(initialState);
-  // const [comment, setComment] = useState(initialStateComment);
-  const [comment, setComment] = useState(initialState);
+  const [allComments, setAllComments] = useState(initialState);
+  const [comment, setComment] = useState('');
+  const [isShowKeyboard, setIsShowKeyboard] = useState(false);
   const { width } = useWindowDimensions();
 
   const commentId = uuidv4();
-
   // creates a date in  the format "DD MMMM, YYYY | HH:MM"
-  const objDate = new Date();
-  const year = objDate.getFullYear();
-  const monthNames = [
+  const year = new Date().getFullYear();
+  const month = [
     'January',
     'February',
     'March',
@@ -85,92 +73,74 @@ const CommentsScreen = ({ navigation, route }) => {
     'October',
     'November',
     'December',
-  ];
-  const monthNumber = objDate.getMonth();
-  const month = monthNames[monthNumber];
-  const day = ('0' + objDate.getDay()).slice(-2);
+  ][new Date().getMonth()];
+  const day = ('0' + new Date().getDay()).slice(-2);
 
-  const hours = objDate.getHours();
-  const min = objDate.getMinutes();
+  const hours = new Date().getHours();
+  const min = new Date().getMinutes();
 
   const dateNow =
     day + ' ' + month + ',' + ' ' + year + ' | ' + hours + ':' + min;
 
   const keyboardHide = () => {
+    setIsShowKeyboard(false);
     Keyboard.dismiss();
   };
 
+  const handleComment = comment => {
+    setComment(comment);
+  };
+
   const handleSend = () => {
-    if (comment.text === '') {
+    if (!comment.trim()) {
       return Alert.alert('Please, enter your comment');
     }
-    console.log(comment);
-    setComment(initialStateComment);
+    const newComment = {
+      id: commentId,
+      text: comment,
+      data: dateNow,
+      avatar: require('../../assets/images/avatar.jpg'),
+      userOwn: true,
+    };
+    setAllComments(prevState => [...prevState, newComment]);
+    setComment('');
     keyboardHide();
-  };
-
-  // === render headers and footers on screen ===
-  const PostPhoto = () => {
-    return (
-      <Image
-        style={{ ...styles.postPhoto, width: width - 16 * 2 }}
-        alt="Post"
-        source={require('../../assets/images/sunset.jpg')}
-        // source={post.photo}
-      />
-    );
-  };
-
-  const CreateComment = () => {
-    return (
-      <View style={styles.fieldComment}>
-        <TextInput
-          style={{
-            ...styles.input,
-            width: width - 32,
-          }}
-          placeholder="Comment..."
-          value={comment.text}
-          onChangeText={value => {
-            const newComment = {
-              id: commentId,
-              text: value,
-              data: dateNow,
-              avatar: require('../../assets/images/avatar.jpg'),
-              userOwn: true,
-            };
-            setComment(prevState => [...prevState, newComment]);
-          }}
-        />
-        <TouchableOpacity style={styles.iconArrowUp} onPress={handleSend}>
-          <Ionicons name="arrow-up-circle" size={34} color={COLORS.accent} />
-        </TouchableOpacity>
-      </View>
-    );
   };
 
   return (
     <TouchableWithoutFeedback onPress={keyboardHide}>
-      <View style={styles.container}>
+      <View
+        style={{ ...styles.container, marginBottom: isShowKeyboard ? 275 : 0 }}
+      >
+        <Image
+          style={{ ...styles.postPhoto, width: width - 16 * 2 }}
+          alt="Post"
+          source={require('../../assets/images/sunset.jpg')}
+          // source={post.photo}
+        />
         <FlatList
-          // === photo as header ===
-          ListHeaderComponent={PostPhoto}
-          ListHeaderComponentStyle={{ marginBottom: 32 }}
-          // === comments ===
-          data={comment}
-          // keyExtractor={item => item.id}
-          keyExtractor={(item, index) => index.toString()}
+          data={allComments}
+          keyExtractor={item => item.id}
           renderItem={({ item }) => <Comment item={item} />}
-          contentContainerStyle={{ flexGrow: 1 }}
-          showsVerticalScrollIndicator={false}
-          // === input as footer ===
-          ListFooterComponent={CreateComment}
-          ListFooterComponentStyle={{
-            flex: 1,
-            justifyContent: 'flex-end',
-            marginBottom: 16,
+          contentContainerStyle={{
+            flexGrow: 1,
           }}
         />
+        <View style={styles.fieldComment}>
+          <TextInput
+            style={{
+              ...styles.input,
+              width: width - 32,
+            }}
+            placeholder="Comment..."
+            value={comment}
+            onChangeText={handleComment}
+            onFocus={() => setIsShowKeyboard(true)}
+          />
+          <TouchableOpacity style={styles.iconArrowUp} onPress={handleSend}>
+            <Ionicons name="arrow-up-circle" size={34} color={COLORS.accent} />
+          </TouchableOpacity>
+        </View>
       </View>
     </TouchableWithoutFeedback>
   );
@@ -186,6 +156,7 @@ const styles = StyleSheet.create({
   postPhoto: {
     height: 240,
     width: '100%',
+    marginBottom: 32,
     resizeMode: 'cover',
     justifyContent: 'center',
     alignItems: 'center',
@@ -194,11 +165,12 @@ const styles = StyleSheet.create({
   },
   fieldComment: {
     justifyContent: 'center',
+    marginBottom: 32,
   },
   input: {
     height: 50,
     padding: 16,
-    color: COLORS.grey_colorText,
+    color: COLORS.black_colorText,
     backgroundColor: COLORS.grey_bgColor,
     borderWidth: 1,
     borderColor: COLORS.grey_colorBorder,
