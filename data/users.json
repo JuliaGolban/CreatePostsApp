@@ -1,0 +1,16 @@
+[
+  {
+    "userID": "1",
+    "login": "Natali Romanova",
+    "email": "email@example.com",
+    "password": "Ukraine",
+    "avatar": "../../assets/images/avatar.jpg"
+  },
+  {
+    "userID": "2",
+    "login": "Circle",
+    "email": "email@example2.com",
+    "password": "Ukraine",
+    "avatar": "../../assets/images/ellipse.png"
+  }
+]

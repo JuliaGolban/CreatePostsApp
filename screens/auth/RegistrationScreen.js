@@ -15,14 +15,15 @@ import {
   Alert,
 } from 'react-native';
 import { AntDesign, Octicons } from '@expo/vector-icons';
+import COLORS from '../../utils/colors';
 
 const initialState = {
-  name: '',
+  login: '',
   email: '',
   password: '',
 };
 
-const RegistrationScreen = () => {
+const RegistrationScreen = ({ navigation }) => {
   const [state, setState] = useState(initialState);
   const [showPassword, setShowPassword] = useState(false);
   const [isFocusedInput, setIsFocusedInput] = useState(null);
@@ -45,6 +46,7 @@ const RegistrationScreen = () => {
       return Alert.alert('Please, enter your credentials');
     }
     console.log(state);
+    // navigation.navigate('Home', { user: state });
     setState(initialState);
   };
 
@@ -66,7 +68,7 @@ const RegistrationScreen = () => {
         >
           <KeyboardAvoidingView
             behavior={Platform.OS == 'ios' ? 'padding' : 'height'}
-            keyboardVerticalOffset={Platform.OS == 'ios' ? '-170' : '-45'}
+            keyboardVerticalOffset={Platform.OS == 'ios' ? '-170' : '-65'}
           >
             <View
               style={{
@@ -74,13 +76,16 @@ const RegistrationScreen = () => {
                 width: width,
               }}
             >
-              <View style={styles.imageBox}>
-                <Image style={styles.image} alt="user avatar" />
-                {/* <Image 
-                    style={styles.btnAdd}
-                    source={require('../../assets/icons/add.png')}
-                    alt="add"
-                  /> */}
+              <View style={styles.avatarWrap}>
+                {isLoadedAvatar ? (
+                  <Image
+                    style={styles.avatar}
+                    alt="user avatar"
+                    source={require('../../assets/images/avatar.jpg')}
+                  />
+                ) : (
+                  <Image style={styles.avatar} alt="user avatar" />
+                )}
                 <TouchableOpacity
                   activeOpacity={0.8}
                   onPress={handleLoadAvatar}
@@ -89,7 +94,7 @@ const RegistrationScreen = () => {
                     <AntDesign
                       name="closecircleo"
                       size={25}
-                      color="#E8E8E8"
+                      color={COLORS.grey_colorBorder}
                       style={styles.btnAdd}
                     />
                   ) : (
@@ -107,12 +112,14 @@ const RegistrationScreen = () => {
                 style={{
                   ...styles.input,
                   borderColor:
-                    isFocusedInput === 'login' ? '#FF6C00' : '#E8E8E8',
+                    isFocusedInput === 'login'
+                      ? COLORS.accent
+                      : COLORS.grey_colorBorder,
                 }}
                 placeholder="Login"
-                value={state.name}
+                value={state.login}
                 onChangeText={value =>
-                  setState(prevState => ({ ...prevState, name: value }))
+                  setState(prevState => ({ ...prevState, login: value }))
                 }
                 onFocus={() => setIsFocusedInput('login')}
                 onBlur={() => setIsFocusedInput(null)}
@@ -123,7 +130,9 @@ const RegistrationScreen = () => {
                   ...styles.input,
                   marginTop: 16,
                   borderColor:
-                    isFocusedInput === 'email' ? '#FF6C00' : '#E8E8E8',
+                    isFocusedInput === 'email'
+                      ? COLORS.accent
+                      : COLORS.grey_colorBorder,
                 }}
                 placeholder="Email address"
                 value={state.email}
@@ -139,7 +148,9 @@ const RegistrationScreen = () => {
                   style={{
                     ...styles.input,
                     borderColor:
-                      isFocusedInput === 'password' ? '#FF6C00' : '#E8E8E8',
+                      isFocusedInput === 'password'
+                        ? COLORS.accent
+                        : COLORS.grey_colorBorder,
                   }}
                   placeholder="Password"
                   value={state.password}
@@ -172,9 +183,19 @@ const RegistrationScreen = () => {
                 style={styles.btn}
                 onPress={handleSubmit}
               >
-                <Text style={styles.btnTitle}>SignUp</Text>
+                <Text style={styles.btnTitle}>Sign Up</Text>
               </TouchableOpacity>
-              <Text style={styles.link}>Already have an account? Login</Text>
+              <View style={styles.linkWrap}>
+                <Text style={styles.link}>Already have an account? </Text>
+                <TouchableOpacity
+                  activeOpacity={0.8}
+                  onPress={() => navigation.navigate('Login')}
+                >
+                  <Text style={{ ...styles.link, fontWeight: '700' }}>
+                    Login
+                  </Text>
+                </TouchableOpacity>
+              </View>
             </View>
           </KeyboardAvoidingView>
         </ImageBackground>
@@ -186,7 +207,7 @@ const RegistrationScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#E5E5E5',
+    backgroundColor: COLORS.grey_bgColor,
   },
   backgroundImage: {
     flex: 1,
@@ -196,15 +217,16 @@ const styles = StyleSheet.create({
   },
   form: {
     paddingHorizontal: 16,
-    backgroundColor: '#FFFFFF',
+    columnGap: 16,
+    backgroundColor: COLORS.white,
     borderTopLeftRadius: 25,
     borderTopRightRadius: 25,
   },
-  imageBox: {
+  avatarWrap: {
     alignItems: 'center',
     marginBottom: 32,
   },
-  image: {
+  avatar: {
     position: 'absolute',
     top: -60,
     flex: 1,
@@ -213,7 +235,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: 120,
     height: 120,
-    backgroundColor: '#F6F6F6',
+    backgroundColor: COLORS.grey_bgColor,
     borderRadius: 16,
   },
   btnAdd: {
@@ -226,31 +248,32 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#FFFFFF',
+    backgroundColor: COLORS.white,
   },
   title: {
     marginTop: 52,
     marginBottom: 32,
     fontFamily: 'Roboto-Medium',
-    fontSize: 30,
     fontWeight: '500',
+    fontSize: 30,
     lineHeight: 35,
     textAlign: 'center',
-    color: '#212121',
+    color: COLORS.black_colorText,
   },
   input: {
     height: 50,
     padding: 16,
-    color: '#212121',
-    backgroundColor: '#F6F6F6',
+    color: COLORS.black_colorText,
+    backgroundColor: COLORS.grey_bgColor,
     borderWidth: 1,
-    borderColor: '#E8E8E8',
+    borderColor: COLORS.grey_colorBorder,
     borderRadius: 8,
     placeholder: {
       fontFamily: 'Roboto-Regular',
+      fontWeight: '400',
       fontSize: 16,
       lineHeight: 19,
-      color: '#BDBDBD',
+      color: COLORS.grey_colorText,
     },
   },
   fieldPassword: {
@@ -260,7 +283,7 @@ const styles = StyleSheet.create({
   iconShow: {
     position: 'absolute',
     right: 15,
-    color: '#BDBDBD',
+    color: COLORS.grey_colorText,
   },
   btn: {
     marginHorizontal: 20,
@@ -271,23 +294,29 @@ const styles = StyleSheet.create({
     paddingHorizontal: 32,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#FF6C00',
+    backgroundColor: COLORS.accent,
     borderRadius: 100,
   },
   btnTitle: {
     fontFamily: 'Roboto-Regular',
+    fontWeight: '400',
     fontSize: 16,
     lineHeight: 19,
     textAlign: 'center',
-    color: '#FFFFFF',
+    color: COLORS.white,
+  },
+  linkWrap: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginBottom: 78,
   },
   link: {
-    marginBottom: 78,
     fontFamily: 'Roboto-Regular',
+    fontWeight: '400',
     fontSize: 16,
     lineHeight: 19,
     textAlign: 'center',
-    color: '#1B4371',
+    color: COLORS.blue_link,
   },
 });
 

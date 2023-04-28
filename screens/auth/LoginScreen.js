@@ -14,13 +14,14 @@ import {
   Alert,
 } from 'react-native';
 import { Octicons } from '@expo/vector-icons';
+import COLORS from '../../utils/colors';
 
 const initialState = {
   email: '',
   password: '',
 };
 
-const LoginScreen = () => {
+const LoginScreen = ({ navigation }) => {
   const [state, setState] = useState(initialState);
   const [showPassword, setShowPassword] = useState(false);
   const [isFocusedInput, setIsFocusedInput] = useState(null);
@@ -44,6 +45,7 @@ const LoginScreen = () => {
       return Alert.alert('Please, enter your credentials');
     }
     console.log(state);
+    // navigation.navigate('Home', user: state);
     setState(initialState);
   };
 
@@ -74,7 +76,9 @@ const LoginScreen = () => {
                 style={{
                   ...styles.input,
                   borderColor:
-                    isFocusedInput === 'email' ? '#FF6C00' : '#E8E8E8',
+                    isFocusedInput === 'email'
+                      ? COLORS.accent
+                      : COLORS.grey_colorBorder,
                 }}
                 placeholder="Email address"
                 value={state.email}
@@ -93,7 +97,9 @@ const LoginScreen = () => {
                   style={{
                     ...styles.input,
                     borderColor:
-                      isFocusedInput === 'password' ? '#FF6C00' : '#E8E8E8',
+                      isFocusedInput === 'password'
+                        ? COLORS.accent
+                        : COLORS.grey_colorBorder,
                   }}
                   placeholder="Password"
                   value={state.password}
@@ -129,9 +135,19 @@ const LoginScreen = () => {
                 style={styles.btn}
                 onPress={handleSubmit}
               >
-                <Text style={styles.btnTitle}>LogIn</Text>
+                <Text style={styles.btnTitle}>Log In</Text>
               </TouchableOpacity>
-              <Text style={styles.link}>Don't have an account? Sing up</Text>
+              <View style={styles.linkWrap}>
+                <Text style={styles.link}>Don't have an account? </Text>
+                <TouchableOpacity
+                  activeOpacity={0.8}
+                  onPress={() => navigation.navigate('Registration')}
+                >
+                  <Text style={{ ...styles.link, fontWeight: '700' }}>
+                    Sing up
+                  </Text>
+                </TouchableOpacity>
+              </View>
             </View>
           </KeyboardAvoidingView>
         </ImageBackground>
@@ -143,7 +159,7 @@ const LoginScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#E5E5E5',
+    backgroundColor: COLORS.grey_bgColor,
   },
   backgroundImage: {
     flex: 1,
@@ -153,7 +169,7 @@ const styles = StyleSheet.create({
   },
   form: {
     paddingHorizontal: 16,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: COLORS.white,
     borderTopLeftRadius: 25,
     borderTopRightRadius: 25,
   },
@@ -165,21 +181,21 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     lineHeight: 35,
     textAlign: 'center',
-    color: '#212121',
+    color: COLORS.black_colorText,
   },
   input: {
     height: 50,
     padding: 16,
-    color: '#212121',
-    backgroundColor: '#F6F6F6',
+    color: COLORS.black_colorText,
+    backgroundColor: COLORS.grey_bgColor,
     borderWidth: 1,
-    borderColor: '#E8E8E8',
+    borderColor: COLORS.grey_colorText,
     borderRadius: 8,
     placeholder: {
       fontFamily: 'Roboto-Regular',
       fontSize: 16,
       lineHeight: 19,
-      color: '#BDBDBD',
+      color: COLORS.grey_colorText,
     },
   },
   fieldPassword: {
@@ -189,7 +205,7 @@ const styles = StyleSheet.create({
   iconShow: {
     position: 'absolute',
     right: 15,
-    color: '#BDBDBD',
+    color: COLORS.grey_colorText,
   },
   btn: {
     marginTop: 43,
@@ -200,7 +216,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 32,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#FF6C00',
+    backgroundColor: COLORS.accent,
     borderRadius: 100,
   },
   btnTitle: {
@@ -208,15 +224,20 @@ const styles = StyleSheet.create({
     fontSize: 16,
     lineHeight: 19,
     textAlign: 'center',
-    color: '#FFFFFF',
+    color: COLORS.white,
+  },
+  linkWrap: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginBottom: 144,
   },
   link: {
-    marginBottom: 144,
     fontFamily: 'Roboto-Regular',
+    fontWeight: '400',
     fontSize: 16,
     lineHeight: 19,
     textAlign: 'center',
-    color: '#1B4371',
+    color: COLORS.blue_link,
   },
 });
 
