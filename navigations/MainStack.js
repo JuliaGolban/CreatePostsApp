@@ -1,13 +1,6 @@
 import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
-import {
-  CommentsScreen,
-  CreatePostsScreen,
-  MapScreen,
-  PostsScreen,
-  ProfileScreen,
-  Home,
-} from '../screens';
+import { CommentsScreen, MapScreen, Home } from '../screens';
 import { MaterialIcons } from '@expo/vector-icons';
 import COLORS from '../utils/colors';
 

@@ -1,7 +1,6 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { Ionicons, Feather } from '@expo/vector-icons';
+import { Ionicons, Feather, MaterialIcons } from '@expo/vector-icons';
 import { StyleSheet, View } from 'react-native';
-import { MaterialIcons } from '@expo/vector-icons';
 import { CreatePostsScreen, PostsScreen, ProfileScreen } from '../screens';
 import COLORS from '../utils/colors';
 
