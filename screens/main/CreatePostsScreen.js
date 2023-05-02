@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   StyleSheet,
   View,
@@ -13,131 +13,204 @@ import {
   useWindowDimensions,
   Alert,
 } from 'react-native';
+import { Camera, CameraType } from 'expo-camera';
+import * as MediaLibrary from 'expo-media-library';
+import * as Location from 'expo-location';
 import { FontAwesome, Feather } from '@expo/vector-icons';
-import 'react-native-get-random-values';
-import { v4 as uuidv4 } from 'uuid';
 import COLORS from '../../utils/colors';
 
-const initialState = {
-  id: '',
-  photo: '',
-  title: '',
-  location: '',
-};
-
 const CreatePostsScreen = ({ navigation }) => {
-  const [post, setPost] = useState(initialState);
-  const [isLoadedPhoto, setIsLoadedPhoto] = useState(false);
+  const [photo, setPhoto] = useState(null);
+  const [title, setTitle] = useState(null);
+  const [location, setLocation] = useState(null);
+  const [coords, setCoords] = useState(null);
+  const [camera, setCamera] = useState(null);
+  const [hasPermission, setHasPermission] = useState(null);
+  const [type, setType] = useState(CameraType.back);
+  const [showKeyboard, setShowKeyboard] = useState(false);
   const { width } = useWindowDimensions();
 
-  const postId = uuidv4();
+  useEffect(() => {
+    (async () => {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        Alert.alert('Permission to access location was denied');
+        return;
+      }
+      let location = await Location.getCurrentPositionAsync({});
+      setCoords(location.coords);
+    })();
+  }, []);
 
   const keyboardHide = () => {
+    setShowKeyboard(false);
     Keyboard.dismiss();
   };
 
-  const handleSubmit = () => {
-    console.log(post);
-    navigation.navigate('Posts', post);
-    setPost(initialState);
-    setIsLoadedPhoto(false);
+  const toggleCameraType = () => {
+    setType(type === CameraType.back ? CameraType.front : CameraType.back);
   };
 
-  const handleCreatePhoto = () => {
-    setPost(prevState => ({
-      ...prevState,
-      photo: 'upload',
-      id: postId,
+  const handleCreatePhoto = async () => {
+    if (camera) {
+      try {
+        const { uri } = await camera.takePictureAsync();
+        // await MediaLibrary.createAssetAsync(uri);
+        let location = await Location.getCurrentPositionAsync({});
+        setPhoto(uri);
+        setCoords(location.coords);
+      } catch (e) {
+        if (
+          e.message.includes(
+            "Call to function 'ExponentCamera.takePicture' has been rejected"
+          )
+        ) {
+          await MediaLibrary.requestPermissionsAsync();
+          await Camera.requestCameraPermissionsAsync();
+          const { uri } = await camera.takePictureAsync();
+          setPhoto(uri);
+        } else {
+          throw e;
+        }
+      }
+    }
+  };
+
+  const handleSubmit = async () => {
+    const post = {
+      title: title,
+      photo: photo,
+      location: location,
+      coords: coords,
       comments: 0,
       likes: 0,
-    }));
-    setIsLoadedPhoto(true);
+    };
+    navigation.navigate('Posts', { post });
+    reset();
   };
 
   const handleDeletePhoto = () => {
-    setPost(prevState => ({ ...prevState, photo: '' }));
-    setIsLoadedPhoto(false);
+    setPhoto(null);
   };
 
   const reset = () => {
-    setPost(initialState);
-    setIsLoadedPhoto(false);
+    setPhoto(null);
+    setTitle(null);
+    setLocation(null);
+    setCoords(null);
   };
+
+  useEffect(() => {
+    (async () => {
+      const { status } = await Camera.requestCameraPermissionsAsync();
+      await MediaLibrary.requestPermissionsAsync();
+
+      setHasPermission(status === 'granted');
+    })();
+  }, []);
+
+  if (hasPermission === false) {
+    return Alert.alert('No access to camera');
+  }
 
   return (
     <TouchableWithoutFeedback onPress={keyboardHide}>
       <View style={styles.container}>
         <View style={styles.photoWrapper}>
-          {post.photo !== '' ? (
-            <Image
-              style={{ ...styles.postPhoto, width: width - 16 * 2 }}
-              alt="Post"
-              source={require('../../assets/images/forest.jpg')}
-            />
-          ) : (
-            <Image
-              style={{ ...styles.postPhoto, width: width - 16 * 2 }}
-              alt="Post"
-            />
-          )}
-          {!isLoadedPhoto ? (
-            <TouchableOpacity
-              activeOpacity={0.8}
-              style={styles.iconCamera}
-              onPress={handleCreatePhoto}
-            >
-              <FontAwesome
-                name="camera"
-                size={24}
-                color={COLORS.grey_colorText}
-              />
-            </TouchableOpacity>
-          ) : (
-            <TouchableOpacity
-              activeOpacity={0.8}
-              style={{
-                ...styles.iconCamera,
-                backgroundColor: COLORS.white_opacity_30,
-              }}
-              onPress={handleDeletePhoto}
-            >
-              <FontAwesome name="camera" size={24} c color={COLORS.white} />
-            </TouchableOpacity>
-          )}
+          <Camera
+            style={{
+              ...styles.camera,
+              width: width - 16 * 2,
+            }}
+            ref={setCamera}
+            type={type}
+          >
+            {photo && (
+              <>
+                <Image
+                  style={{ ...styles.postPhoto, width: width - 16 * 2 }}
+                  source={{ uri: photo }}
+                  alt="Photo"
+                />
+                <TouchableOpacity
+                  activeOpacity={0.8}
+                  style={styles.iconCameraType}
+                  onPress={toggleCameraType}
+                >
+                  <FontAwesome name="refresh" size={24} color={COLORS.white} />
+                </TouchableOpacity>
+              </>
+            )}
+            {!photo ? (
+              <TouchableOpacity
+                activeOpacity={0.8}
+                style={styles.iconCamera}
+                onPress={handleCreatePhoto}
+              >
+                <FontAwesome
+                  name="camera"
+                  size={24}
+                  color={COLORS.grey_colorText}
+                />
+              </TouchableOpacity>
+            ) : (
+              <TouchableOpacity
+                activeOpacity={0.8}
+                style={{
+                  ...styles.iconCamera,
+                  backgroundColor: COLORS.white_opacity_30,
+                }}
+                onPress={handleDeletePhoto}
+              >
+                <FontAwesome name="camera" size={24} color={COLORS.white} />
+              </TouchableOpacity>
+            )}
+          </Camera>
         </View>
-        {!isLoadedPhoto ? (
+        {!photo ? (
           <Text style={styles.postInfo}>Upload photo</Text>
         ) : (
           <Text style={styles.postInfo}>Edit photo</Text>
         )}
-        <View style={styles.postInputSet}>
+        {/* <KeyboardAvoidingView
+          behavior={Platform.OS == 'ios' ? 'padding' : 'height'}
+          keyboardVerticalOffset={Platform.OS == 'ios' ? '-170' : '-65'}
+        > */}
+        <View
+          style={{
+            ...styles.postInputSet,
+            // marginBottom: isShowKeyboard ? -235 : 0,
+          }}
+        >
           <TextInput
             style={styles.postInput}
             placeholder="Post title..."
-            value={post.title}
-            onChangeText={value =>
-              setPost(prevState => ({ ...prevState, title: value }))
-            }
+            value={title}
+            onChangeText={value => setTitle(value)}
           />
           <View style={styles.postField}>
             <TextInput
               style={{ ...styles.postInput, paddingLeft: 26 }}
               placeholder="Location..."
-              value={post.location}
-              onChangeText={value =>
-                setPost(prevState => ({ ...prevState, location: value }))
-              }
+              value={location}
+              onChangeText={value => setLocation(value)}
             />
             <Feather
               name="map-pin"
               size={22}
               color={COLORS.grey_colorText}
               style={styles.iconLocation}
-              onPress={() => navigation.navigate('MapScreen')}
+              onPress={() =>
+                navigation.navigate('Map', {
+                  latitude: coords.latitude,
+                  longitude: coords.longitude,
+                })
+              }
             />
           </View>
         </View>
-        {isLoadedPhoto ? (
+        {/* </KeyboardAvoidingView> */}
+        {photo ? (
           <TouchableOpacity
             activeOpacity={0.8}
             style={styles.btnPublish}
@@ -153,7 +226,7 @@ const CreatePostsScreen = ({ navigation }) => {
               backgroundColor: COLORS.grey_bgColor,
             }}
             onPress={() => {
-              if (!isLoadedPhoto) {
+              if (!photo) {
                 return Alert.alert('Please, upload your photo');
               }
             }}
@@ -189,14 +262,21 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  postPhoto: {
+  camera: {
     height: 240,
     width: '100%',
     resizeMode: 'cover',
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: COLORS.grey_bgColor,
-    borderRadius: 8,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: COLORS.grey_colorBorder,
+    overflow: 'hidden',
+  },
+  postPhoto: {
+    height: 240,
+    width: 240,
   },
   postInfo: {
     marginTop: 8,
@@ -262,6 +342,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: COLORS.white,
     borderRadius: 100,
+  },
+  iconCameraType: {
+    position: 'absolute',
+    height: 30,
+    width: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   iconLocation: {
     position: 'absolute',
