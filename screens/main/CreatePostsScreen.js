@@ -19,15 +19,7 @@ import * as Location from 'expo-location';
 import { FontAwesome, Feather } from '@expo/vector-icons';
 import COLORS from '../../utils/colors';
 
-const initialState = {
-  id: '',
-  photo: '',
-  title: '',
-  location: '',
-};
-
 const CreatePostsScreen = ({ navigation }) => {
-  const [post, setPost] = useState(initialState);
   const [photo, setPhoto] = useState(null);
   const [title, setTitle] = useState(null);
   const [location, setLocation] = useState(null);
@@ -63,11 +55,8 @@ const CreatePostsScreen = ({ navigation }) => {
     if (camera) {
       try {
         const { uri } = await camera.takePictureAsync();
-        console.log('handleCreatePhoto ~ uri:', uri);
         // await MediaLibrary.createAssetAsync(uri);
         let location = await Location.getCurrentPositionAsync({});
-        console.log('handleCreatePhoto ~ location:', location);
-
         setPhoto(uri);
         setCoords(location.coords);
       } catch (e) {
@@ -87,18 +76,17 @@ const CreatePostsScreen = ({ navigation }) => {
     }
   };
 
-  const handleSubmit = () => {
-    setPost({
+  const handleSubmit = async () => {
+    const post = {
       title: title,
       photo: photo,
       location: location,
       coords: coords,
       comments: 0,
       likes: 0,
-    });
-    console.log(post);
+    };
     navigation.navigate('Posts', { post });
-    // setPost(initialState);
+    reset();
   };
 
   const handleDeletePhoto = () => {
@@ -106,7 +94,6 @@ const CreatePostsScreen = ({ navigation }) => {
   };
 
   const reset = () => {
-    setPost(initialState);
     setPhoto(null);
     setTitle(null);
     setLocation(null);
@@ -213,7 +200,12 @@ const CreatePostsScreen = ({ navigation }) => {
               size={22}
               color={COLORS.grey_colorText}
               style={styles.iconLocation}
-              onPress={() => navigation.navigate('MapScreen')}
+              onPress={() =>
+                navigation.navigate('Map', {
+                  latitude: coords.latitude,
+                  longitude: coords.longitude,
+                })
+              }
             />
           </View>
         </View>

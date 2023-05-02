@@ -4,7 +4,7 @@ import MapView, { Marker } from 'react-native-maps';
 import COLORS from '../../utils/colors';
 
 const MapScreen = ({ route }) => {
-  const { longitude, latitude } = route.params.location;
+  const { longitude, latitude } = route.params;
 
   //  const getInitialState = (longitude, latitude) =>{
   //   return {

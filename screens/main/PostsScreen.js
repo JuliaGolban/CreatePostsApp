@@ -11,6 +11,10 @@ const initialState = [
     comments: 0,
     likes: 0,
     location: `Ivano-Frankivs'k Region, Ukraine`,
+    coords: {
+      latitude: 48.914677,
+      longitude: 24.705453,
+    },
   },
   {
     id: 2,
@@ -19,6 +23,10 @@ const initialState = [
     comments: 0,
     likes: 0,
     location: `Odessa, Ukraine`,
+    coords: {
+      latitude: 46.475699386607516,
+      longitude: 30.728759765625004,
+    },
   },
 ];
 
@@ -46,7 +54,7 @@ const PostsScreen = ({ navigation, route }) => {
       </View>
       <FlatList
         data={posts}
-        keyExtractor={item => item.id}
+        keyExtractor={(item, index) => index.toString()}
         renderItem={({ item }) => <Post item={item} navigation={navigation} />}
       />
     </View>
