@@ -1,43 +1,28 @@
 import React, { useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import { StyleSheet, View, Text, Image, FlatList } from 'react-native';
-import Post from '../../components/Post';
+import db from '../../firebase/config';
+import Post from '../../components';
 import COLORS from '../../utils/colors';
 
-const initialState = [
-  {
-    id: 1,
-    photo: require('../../assets/images/forest.jpg'),
-    title: 'Forest',
-    comments: 0,
-    likes: 0,
-    location: `Ivano-Frankivs'k Region, Ukraine`,
-    coords: {
-      latitude: 48.914677,
-      longitude: 24.705453,
-    },
-  },
-  {
-    id: 2,
-    photo: require('../../assets/images/sunset.jpg'),
-    title: 'Sunset',
-    comments: 0,
-    likes: 0,
-    location: `Odessa, Ukraine`,
-    coords: {
-      latitude: 46.475699386607516,
-      longitude: 30.728759765625004,
-    },
-  },
-];
-
 const PostsScreen = ({ navigation, route }) => {
-  const [posts, setPosts] = useState(initialState);
+  const [posts, setPosts] = useState([]);
+  const { login, email, avatar } = useSelector(state => state.auth);
 
   useEffect(() => {
-    if (route.params) {
-      setPosts(prevState => [...prevState, route.params]);
-    }
-  }, [route.params]);
+    (async function getPosts() {
+      try {
+        await db
+          .firestore()
+          .collection('posts')
+          .onSnapshot(data =>
+            setPosts(data.docs.map(doc => ({ ...doc.data(), id: doc.id })))
+          );
+      } catch (error) {
+        console.log(error);
+      }
+    })();
+  }, []);
 
   return (
     <View style={styles.container}>
@@ -45,11 +30,11 @@ const PostsScreen = ({ navigation, route }) => {
         <Image
           style={styles.avatar}
           alt="user avatar"
-          source={require('../../assets/images/avatar.jpg')}
+          source={{ uri: avatar }}
         />
         <View style={styles.credentials}>
-          <Text style={styles.login}>Natali Romanova</Text>
-          <Text style={styles.email}>email@example.com</Text>
+          <Text style={styles.login}>{login}</Text>
+          <Text style={styles.email}>{email}</Text>
         </View>
       </View>
       <FlatList

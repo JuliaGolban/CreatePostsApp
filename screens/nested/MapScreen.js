@@ -6,17 +6,6 @@ import COLORS from '../../utils/colors';
 const MapScreen = ({ route }) => {
   const { longitude, latitude } = route.params;
 
-  //  const getInitialState = (longitude, latitude) =>{
-  //   return {
-  //     region: {
-  //       latitude,
-  //       longitude,
-  //       latitudeDelta: 0.0922,
-  //       longitudeDelta: 0.0421,
-  //     },
-  //   };
-  // }
-
   return (
     <View style={styles.container}>
       <MapView

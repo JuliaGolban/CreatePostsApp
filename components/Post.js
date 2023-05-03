@@ -10,7 +10,7 @@ import { Feather } from '@expo/vector-icons';
 import COLORS from '../utils/colors';
 
 const Post = ({ item, navigation }) => {
-  const { title, photo, comments, likes, location, coords } = item;
+  const { id, title, photo, comments, likes, location, coords } = item;
   const { width } = useWindowDimensions();
 
   return (
@@ -57,7 +57,13 @@ const Post = ({ item, navigation }) => {
           <TouchableOpacity
             activeOpacity={0.8}
             style={{ ...styles.postIconWrap, marginRight: 24 }}
-            onPress={() => navigation.navigate('Comments')}
+            onPress={() =>
+              navigation.navigate('Comments', {
+                postID: id,
+                photo,
+                comments,
+              })
+            }
           >
             <Feather
               name="message-circle"

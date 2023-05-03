@@ -14,21 +14,29 @@ import {
   useWindowDimensions,
   Alert,
 } from 'react-native';
+import { useDispatch } from 'react-redux';
 import { AntDesign, Octicons } from '@expo/vector-icons';
+import * as MediaLibrary from 'expo-media-library';
+import * as ImagePicker from 'expo-image-picker';
+
+import db from '../../firebase/config';
+import { authSignUpUser } from '../../redux/auth/authOperations';
 import COLORS from '../../utils/colors';
 
 const initialState = {
   login: '',
   email: '',
   password: '',
+  avatar: null,
 };
 
 const RegistrationScreen = ({ navigation }) => {
   const [state, setState] = useState(initialState);
+  const [avatar, setAvatar] = useState(initialState.avatar);
   const [showPassword, setShowPassword] = useState(false);
   const [isFocusedInput, setIsFocusedInput] = useState(null);
-  const [isLoadedAvatar, setIsLoadedAvatar] = useState(false);
 
+  const dispatch = useDispatch();
   const { height, width } = useWindowDimensions();
 
   const keyboardHide = () => {
@@ -41,18 +49,72 @@ const RegistrationScreen = ({ navigation }) => {
     setShowPassword(toggle);
   };
 
-  const handleSubmit = () => {
-    if (state.name === '' || state.email === '' || state.password === '') {
+  const handleSubmit = async () => {
+    keyboardHide();
+
+    if (state.login === '' || state.email === '' || state.password === '') {
       return Alert.alert('Please, enter your credentials');
     }
-    console.log(state);
-    // navigation.navigate('Home', { user: state });
+    const photo = await uploadPhotoToServer();
+    const candidate = {
+      login: state.login,
+      email: state.email,
+      password: state.password,
+      avatar: photo,
+    };
+    console.log(candidate);
+    dispatch(authSignUpUser(candidate));
+
     setState(initialState);
+    setAvatar(initialState.avatar);
   };
 
-  const handleLoadAvatar = () => {
-    const toggle = isLoadedAvatar ? false : true;
-    setIsLoadedAvatar(toggle);
+  const uploadPhotoToServer = async () => {
+    try {
+      const response = await fetch(avatar);
+      const file = await response.blob();
+      const uniqueUserId = Date.now().toString();
+      await db.storage().ref(`avatar/${uniqueUserId}`).put(file);
+      const processedPhoto = await db
+        .storage()
+        .ref('avatar')
+        .child(uniqueUserId)
+        .getDownloadURL();
+      return processedPhoto;
+    } catch (error) {
+      console.log('error.message', error.message);
+    }
+  };
+
+  const handleDownloadAvatar = async () => {
+    try {
+      const permissionResult =
+        await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+      if (permissionResult.granted === false) {
+        Alert.alert("You've refused to allow this app to access your photos!");
+        return;
+      }
+
+      let result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.All,
+        allowsEditing: true,
+        aspect: [4, 3],
+        quality: 1,
+      });
+
+      if (!result.canceled) {
+        setAvatar(result.assets[0].uri);
+      } else {
+        Alert.alert('You did not select any image.');
+      }
+    } catch (error) {
+      console.log('error.message', error.message);
+    }
+  };
+
+  const handleDeleteAvatar = () => {
+    setAvatar(null);
   };
 
   return (
@@ -77,35 +139,41 @@ const RegistrationScreen = ({ navigation }) => {
               }}
             >
               <View style={styles.avatarWrap}>
-                {isLoadedAvatar ? (
+                {avatar ? (
                   <Image
                     style={styles.avatar}
                     alt="user avatar"
-                    source={require('../../assets/images/avatar.jpg')}
+                    source={{ uri: avatar }}
                   />
                 ) : (
                   <Image style={styles.avatar} alt="user avatar" />
                 )}
-                <TouchableOpacity
-                  activeOpacity={0.8}
-                  onPress={handleLoadAvatar}
-                >
-                  {isLoadedAvatar ? (
+
+                {avatar ? (
+                  <TouchableOpacity
+                    activeOpacity={0.8}
+                    onPress={handleDeleteAvatar}
+                  >
                     <AntDesign
                       name="closecircleo"
                       size={25}
                       color={COLORS.grey_colorBorder}
                       style={styles.btnAdd}
                     />
-                  ) : (
+                  </TouchableOpacity>
+                ) : (
+                  <TouchableOpacity
+                    activeOpacity={0.8}
+                    onPress={handleDownloadAvatar}
+                  >
                     <AntDesign
                       name="pluscircleo"
                       size={25}
                       color="#FF6C00"
                       style={styles.btnAdd}
                     />
-                  )}
-                </TouchableOpacity>
+                  </TouchableOpacity>
+                )}
               </View>
               <Text style={styles.title}>Registration</Text>
               <TextInput

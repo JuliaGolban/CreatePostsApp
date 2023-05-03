@@ -1,10 +1,10 @@
 import RegistrationScreen from './auth/RegistrationScreen';
 import LoginScreen from './auth/LoginScreen';
-import CommentsScreen from './main/CommentsScreen';
 import CreatePostsScreen from './main/CreatePostsScreen';
-import MapScreen from './main/MapScreen';
 import PostsScreen from './main/PostsScreen';
 import ProfileScreen from './main/ProfileScreen';
+import MapScreen from './nested/MapScreen';
+import CommentsScreen from './nested/CommentsScreen';
 import Home from './main/Home';
 
 export {

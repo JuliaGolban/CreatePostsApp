@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import {
   StyleSheet,
   View,
@@ -17,6 +18,7 @@ import { Camera, CameraType } from 'expo-camera';
 import * as MediaLibrary from 'expo-media-library';
 import * as Location from 'expo-location';
 import { FontAwesome, Feather } from '@expo/vector-icons';
+import db from '../../firebase/config';
 import COLORS from '../../utils/colors';
 
 const CreatePostsScreen = ({ navigation }) => {
@@ -29,6 +31,8 @@ const CreatePostsScreen = ({ navigation }) => {
   const [type, setType] = useState(CameraType.back);
   const [showKeyboard, setShowKeyboard] = useState(false);
   const { width } = useWindowDimensions();
+
+  const { userID, login } = useSelector(state => state.auth);
 
   useEffect(() => {
     (async () => {
@@ -76,15 +80,46 @@ const CreatePostsScreen = ({ navigation }) => {
     }
   };
 
+  const uploadPhotoToServer = async () => {
+    const response = await fetch(photo);
+    const file = await response.blob();
+
+    const uniquePostId = Date.now().toString();
+
+    await db.storage().ref(`postImage/${uniquePostId}`).put(file);
+    const processedPhoto = await db
+      .storage()
+      .ref('postImage')
+      .child(uniquePostId)
+      .getDownloadURL();
+    setPhoto(processedPhoto);
+
+    return processedPhoto;
+  };
+
+  const uploadPostToServer = async () => {
+    try {
+      const photo = await uploadPhotoToServer();
+      await db
+        .firestore()
+        .collection('posts')
+        .add({ userID, login, photo, location, title, coords });
+    } catch (error) {
+      console.error('Error adding document: ', error);
+    }
+  };
+
   const handleSubmit = async () => {
     const post = {
-      title: title,
-      photo: photo,
-      location: location,
-      coords: coords,
+      userID,
+      title,
+      photo,
+      location,
+      coords,
       comments: 0,
       likes: 0,
     };
+    uploadPostToServer();
     navigation.navigate('Posts', { post });
     reset();
   };
@@ -277,6 +312,7 @@ const styles = StyleSheet.create({
   postPhoto: {
     height: 240,
     width: 240,
+    borderRadius: 10,
   },
   postInfo: {
     marginTop: 8,

@@ -3,19 +3,15 @@ import { StyleSheet, View, Image, TouchableOpacity } from 'react-native';
 import { AntDesign } from '@expo/vector-icons';
 import COLORS from '../utils/colors';
 
-const Avatar = ({ uri }) => {
-  const [isLoadedAvatar, setIsLoadedAvatar] = useState(false);
-
-  const handleLoadAvatar = () => {
-    const toggle = isLoadedAvatar ? false : true;
-    setIsLoadedAvatar(toggle);
-  };
+const Avatar = ({ placeholderImageSource, selectedImage }) => {
+  const imageSource =
+    selectedImage !== null ? { uri: selectedImage } : placeholderImageSource;
 
   return (
     <View style={styles.imageBox}>
-      <Image style={styles.image} alt="user avatar" source={uri} />
+      <Image style={styles.image} alt="user avatar" source={imageSource} />
       <TouchableOpacity activeOpacity={0.8} onPress={handleLoadAvatar}>
-        {isLoadedAvatar ? (
+        {selectedImage !== null ? (
           <AntDesign
             name="closecircleo"
             size={25}
