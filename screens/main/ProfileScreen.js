@@ -73,7 +73,7 @@ const ProfileScreen = ({ navigation }) => {
               source={{ uri: avatar }}
             />
             <TouchableOpacity activeOpacity={0.8} onPress={handleLoadAvatar}>
-              {avatar ? (
+              {avatar !== null ? (
                 <AntDesign
                   name="closecircleo"
                   size={25}

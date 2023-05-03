@@ -149,7 +149,7 @@ const RegistrationScreen = ({ navigation }) => {
                   <Image style={styles.avatar} alt="user avatar" />
                 )}
 
-                {avatar ? (
+                {avatar !== null ? (
                   <TouchableOpacity
                     activeOpacity={0.8}
                     onPress={handleDeleteAvatar}
@@ -169,7 +169,7 @@ const RegistrationScreen = ({ navigation }) => {
                     <AntDesign
                       name="pluscircleo"
                       size={25}
-                      color="#FF6C00"
+                      color={COLORS.accent}
                       style={styles.btnAdd}
                     />
                   </TouchableOpacity>
