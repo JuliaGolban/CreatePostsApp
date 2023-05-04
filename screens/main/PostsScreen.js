@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { StyleSheet, View, Text, Image, FlatList } from 'react-native';
-import db from '../../firebase/config';
+import { collection, getDocs } from 'firebase/firestore';
+import { db } from '../../firebase/config';
 import Post from '../../components';
 import COLORS from '../../utils/colors';
 
@@ -12,17 +13,17 @@ const PostsScreen = ({ navigation, route }) => {
   useEffect(() => {
     (async function getPosts() {
       try {
-        await db
-          .firestore()
-          .collection('posts')
-          .onSnapshot(data =>
-            setPosts(data.docs.map(doc => ({ ...doc.data(), id: doc.id })))
-          );
+        const querySnapshot = await getDocs(collection(db, 'posts'));
+        querySnapshot.forEach(doc => {
+          setPosts({ ...doc.data(), id: doc.id });
+        });
+        console.log(doc.data());
+        console.log('PostsScreen ==>', posts);
       } catch (error) {
         console.log(error);
       }
     })();
-  }, []);
+  }, [route.params]);
 
   return (
     <View style={styles.container}>

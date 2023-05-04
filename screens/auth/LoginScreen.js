@@ -48,7 +48,7 @@ const LoginScreen = ({ navigation }) => {
     if (state.email === '' || state.password === '') {
       return Alert.alert('Please, enter your credentials');
     }
-    console.log(state);
+    console.log('LoginScreen ==>', state);
     dispatch(authSignInUser(state));
 
     setState(initialState);

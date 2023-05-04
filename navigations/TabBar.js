@@ -1,12 +1,16 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons, Feather, MaterialIcons } from '@expo/vector-icons';
 import { StyleSheet, View } from 'react-native';
+import { useDispatch } from 'react-redux';
+import { authSignOutUser } from '../redux/auth/authOperations';
 import { CreatePostsScreen, PostsScreen, ProfileScreen } from '../screens';
 import COLORS from '../utils/colors';
 
 const MainTabs = createBottomTabNavigator();
 
 const TabBar = () => {
+  const dispatch = useDispatch();
+
   return (
     <MainTabs.Navigator
       screenOptions={{
@@ -57,7 +61,10 @@ const TabBar = () => {
               name="logout"
               size={24}
               color={COLORS.grey_colorText}
-              onPress={() => navigation.navigate('Login')}
+              onPress={() => {
+                dispatch(authSignOutUser());
+                navigation.navigate('Login');
+              }}
             />
           ),
           tabBarIcon: () => (
@@ -107,7 +114,10 @@ const TabBar = () => {
               name="logout"
               size={24}
               color={COLORS.grey_colorText}
-              onPress={() => navigation.navigate('Login')}
+              onPress={() => {
+                dispatch(authSignOutUser());
+                navigation.navigate('Login');
+              }}
             />
           ),
           tabBarIcon: () => (

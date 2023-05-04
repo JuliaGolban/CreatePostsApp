@@ -25,7 +25,7 @@ const Comment = ({ item }) => {
           marginRight: userOwn ? 0 : 16,
         }}
         alt="user avatar"
-        source={avatar}
+        source={{ uri: avatar }}
       />
       <View
         style={{

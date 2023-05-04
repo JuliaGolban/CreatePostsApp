@@ -11,6 +11,7 @@ import COLORS from '../utils/colors';
 
 const Post = ({ item, navigation }) => {
   const { id, title, photo, comments, likes, location, coords } = item;
+  console.log('Post ~ item:', item);
   const { width } = useWindowDimensions();
 
   return (
@@ -57,13 +58,7 @@ const Post = ({ item, navigation }) => {
           <TouchableOpacity
             activeOpacity={0.8}
             style={{ ...styles.postIconWrap, marginRight: 24 }}
-            onPress={() =>
-              navigation.navigate('Comments', {
-                postID: id,
-                photo,
-                comments,
-              })
-            }
+            onPress={() => navigation.navigate('Comments', { item })}
           >
             <Feather
               name="message-circle"

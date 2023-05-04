@@ -19,7 +19,7 @@ import { AntDesign, Octicons } from '@expo/vector-icons';
 import * as MediaLibrary from 'expo-media-library';
 import * as ImagePicker from 'expo-image-picker';
 
-import db from '../../firebase/config';
+import { db, storage } from '../../firebase/config';
 import { authSignUpUser } from '../../redux/auth/authOperations';
 import COLORS from '../../utils/colors';
 
@@ -62,7 +62,7 @@ const RegistrationScreen = ({ navigation }) => {
       password: state.password,
       avatar: photo,
     };
-    console.log(candidate);
+    console.log('RegisterScreen ==>', candidate);
     dispatch(authSignUpUser(candidate));
 
     setState(initialState);
@@ -74,12 +74,9 @@ const RegistrationScreen = ({ navigation }) => {
       const response = await fetch(avatar);
       const file = await response.blob();
       const uniqueUserId = Date.now().toString();
-      await db.storage().ref(`avatar/${uniqueUserId}`).put(file);
-      const processedPhoto = await db
-        .storage()
-        .ref('avatar')
-        .child(uniqueUserId)
-        .getDownloadURL();
+      const storageRef = ref(storage, `avatar/${uniqueUserId}`);
+      await uploadBytes(storageRef, file);
+      const processedPhoto = await getDownloadURL(storageRef);
       return processedPhoto;
     } catch (error) {
       console.log('error.message', error.message);

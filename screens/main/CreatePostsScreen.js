@@ -18,7 +18,9 @@ import { Camera, CameraType } from 'expo-camera';
 import * as MediaLibrary from 'expo-media-library';
 import * as Location from 'expo-location';
 import { FontAwesome, Feather } from '@expo/vector-icons';
-import db from '../../firebase/config';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { collection, setDoc, doc } from 'firebase/firestore';
+import { db, storage } from '../../firebase/config';
 import COLORS from '../../utils/colors';
 
 const CreatePostsScreen = ({ navigation }) => {
@@ -83,33 +85,32 @@ const CreatePostsScreen = ({ navigation }) => {
   const uploadPhotoToServer = async () => {
     const response = await fetch(photo);
     const file = await response.blob();
-
     const uniquePostId = Date.now().toString();
-
-    await db.storage().ref(`postImage/${uniquePostId}`).put(file);
-    const processedPhoto = await db
-      .storage()
-      .ref('postImage')
-      .child(uniquePostId)
-      .getDownloadURL();
-    setPhoto(processedPhoto);
-
+    const storageRef = ref(storage, `postImage/${uniquePostId}`);
+    await uploadBytes(storageRef, file);
+    const processedPhoto = await getDownloadURL(storageRef);
     return processedPhoto;
   };
 
   const uploadPostToServer = async () => {
     try {
       const photo = await uploadPhotoToServer();
-      await db
-        .firestore()
-        .collection('posts')
-        .add({ userID, login, photo, location, title, coords });
+      const createPost = doc(collection(db, 'posts'));
+      await setDoc(createPost, {
+        userID,
+        login,
+        photo,
+        location,
+        title,
+        coords,
+      });
     } catch (error) {
       console.error('Error adding document: ', error);
     }
   };
 
   const handleSubmit = async () => {
+    uploadPostToServer();
     const post = {
       userID,
       title,
@@ -119,8 +120,8 @@ const CreatePostsScreen = ({ navigation }) => {
       comments: 0,
       likes: 0,
     };
-    uploadPostToServer();
     navigation.navigate('Posts', { post });
+    console.log('Create post ==>', post);
     reset();
   };
 
@@ -298,6 +299,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   camera: {
+    position: 'relative',
     height: 240,
     width: '100%',
     resizeMode: 'cover',
@@ -381,10 +383,10 @@ const styles = StyleSheet.create({
   },
   iconCameraType: {
     position: 'absolute',
-    height: 30,
-    width: 30,
     justifyContent: 'center',
     alignItems: 'center',
+    height: 30,
+    width: 30,
   },
   iconLocation: {
     position: 'absolute',

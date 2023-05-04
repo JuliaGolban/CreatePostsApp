@@ -1,7 +1,7 @@
 import { StyleSheet, View, Text } from 'react-native';
 import { getHeaderTitle } from '@react-navigation/elements';
 import { MaterialIcons } from '@expo/vector-icons';
-import { COLORS } from '../utils/colors';
+import COLORS from '../utils/colors';
 
 const Header = ({ navigation, route, options, back }) => {
   const title = getHeaderTitle(options, route.name);

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   StyleSheet,
@@ -13,8 +13,13 @@ import {
   useWindowDimensions,
 } from 'react-native';
 import { AntDesign, MaterialIcons } from '@expo/vector-icons';
-import db from '../../firebase/config';
-import { authSignOutUser } from '../../redux/auth/authOperations';
+import * as ImagePicker from 'expo-image-picker';
+import { collection, getDocs, where, query } from 'firebase/firestore';
+import { db, storage } from '../../firebase/config';
+import {
+  authChangeUser,
+  authSignOutUser,
+} from '../../redux/auth/authOperations';
 import Post from '../../components/Post';
 import COLORS from '../../utils/colors';
 
@@ -22,23 +27,79 @@ const ProfileScreen = ({ navigation }) => {
   const dispatch = useDispatch();
   const { userID, login, avatar } = useSelector(state => state.auth);
   const [posts, setPosts] = useState([]);
+  const [avatarProfile, setAvatarProfile] = useState(avatar);
   const { height, width } = useWindowDimensions();
 
   useEffect(() => {
     (async function getUserPosts() {
       try {
-        await db
-          .firestore()
-          .collection('posts')
-          .where('userID', '==', userID)
-          .onSnapshot(data =>
-            setPosts(data.docs.map(doc => ({ ...doc.data(), id: doc.id })))
-          );
+        const userProfilePosts = query(
+          collection(db, 'posts'),
+          where('userID', '==', userID)
+        );
+        const querySnapshot = await getDocs(userProfilePosts);
+        querySnapshot.forEach(doc => {
+          setPosts({ ...doc.data(), id: doc.id });
+        });
+        console.log('ProfileScreen ===>', posts);
       } catch (error) {
         console.log(error);
       }
     })();
   }, []);
+
+  const uploadPhotoToServer = async () => {
+    try {
+      const response = await fetch(avatarProfile);
+      const file = await response.blob();
+      const uniqueUserId = Date.now().toString();
+      const storageRef = ref(storage, `avatar/${uniqueUserId}`);
+      await uploadBytes(storageRef, file);
+      const processedPhoto = await getDownloadURL(storageRef);
+      return processedPhoto;
+    } catch (error) {
+      console.log('error.message', error.message);
+    }
+  };
+
+  const handleDownloadAvatar = async () => {
+    try {
+      const permissionResult =
+        await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+      if (permissionResult.granted === false) {
+        Alert.alert("You've refused to allow this app to access your photos!");
+        return;
+      }
+
+      let result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.All,
+        allowsEditing: true,
+        aspect: [4, 3],
+        quality: 1,
+      });
+
+      if (!result.canceled) {
+        setAvatarProfile(result.assets[0].uri);
+      } else {
+        Alert.alert('You did not select any image.');
+      }
+
+      const photo = await uploadPhotoToServer();
+      const user = {
+        login,
+        avatar: photo,
+      };
+      console.log('ProfileScreen  ==>', user);
+      dispatch(authChangeUser(user));
+    } catch (error) {
+      console.log('error.message', error.message);
+    }
+  };
+
+  const handleDeleteAvatar = () => {
+    setAvatarProfile(null);
+  };
 
   return (
     <View style={styles.container}>
@@ -54,6 +115,7 @@ const ProfileScreen = ({ navigation }) => {
           style={{
             ...styles.content,
             width: width,
+            minHeight: height - 250,
           }}
         >
           <MaterialIcons
@@ -72,23 +134,31 @@ const ProfileScreen = ({ navigation }) => {
               alt="user avatar"
               source={{ uri: avatar }}
             />
-            <TouchableOpacity activeOpacity={0.8} onPress={handleLoadAvatar}>
-              {avatar !== null ? (
+            {avatar ? (
+              <TouchableOpacity
+                activeOpacity={0.8}
+                onPress={handleDeleteAvatar}
+              >
                 <AntDesign
                   name="closecircleo"
                   size={25}
                   color={COLORS.grey_colorBorder}
                   style={styles.btnAdd}
                 />
-              ) : (
+              </TouchableOpacity>
+            ) : (
+              <TouchableOpacity
+                activeOpacity={0.8}
+                onPress={handleDownloadAvatar}
+              >
                 <AntDesign
                   name="pluscircleo"
                   size={25}
                   color={COLORS.accent}
                   style={styles.btnAdd}
                 />
-              )}
-            </TouchableOpacity>
+              </TouchableOpacity>
+            )}
             <Text style={styles.login}>{login}</Text>
             <FlatList
               data={posts}

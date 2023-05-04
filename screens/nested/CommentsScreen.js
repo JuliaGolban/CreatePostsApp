@@ -15,7 +15,8 @@ import {
   Alert,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import db from '../../firebase/config';
+import { collection, setDoc, doc, getDocs } from 'firebase/firestore';
+import { db } from '../../firebase/config';
 import Comment from '../../components/Comment';
 import COLORS from '../../utils/colors';
 
@@ -64,11 +65,21 @@ const CommentsScreen = ({ navigation, route }) => {
     if (!comment.trim()) {
       return Alert.alert('Please, enter your comment');
     }
-    db.firestore()
-      .collection('posts')
-      .doc(postID)
-      .collection('comments')
-      .add({ text: comment, data: dateNow, login, avatar, userOwn: true });
+    // db.firestore()
+    // .collection('posts')
+    // .doc(postID)
+    // .collection('comments')
+    // .add({ text: comment, data: dateNow, login, avatar, userOwn: true });
+
+    const createComment = doc(collection(db, 'posts/' + postID + '/comments/'));
+    console.log('createComment', createComment);
+    await setDoc(createComment, {
+      text: comment,
+      data: dateNow,
+      login,
+      avatar,
+      userOwn: true,
+    });
 
     setComment('');
     keyboardHide();
@@ -77,16 +88,24 @@ const CommentsScreen = ({ navigation, route }) => {
   useEffect(() => {
     (async function getPosts() {
       try {
-        await db
-          .firestore()
-          .collection('posts')
-          .doc(postID)
-          .collection('comments')
-          .onSnapshot(data =>
-            setAllComments(
-              data.docs.map(doc => ({ ...doc.data(), id: doc.id }))
-            )
-          );
+        // await db
+        // .firestore()
+        // .collection('posts')
+        // .doc(postID)
+        // .collection('comments')
+        // .onSnapshot(data =>
+        //   setAllComments(
+        //     data.docs.map(doc => ({ ...doc.data(), id: doc.id }))
+        //   )
+        // );
+
+        const querySnapshot = await getDocs(
+          collection(db, 'posts/' + postID + '/comments/')
+        );
+        querySnapshot.forEach(doc => {
+          setAllComments({ ...doc.data(), id: doc.id });
+          console.log('CommentsScreen ==>', allComments);
+        });
       } catch (error) {
         console.log(error);
       }

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { StyleSheet, View, TouchableOpacity } from 'react-native';
 import { MaterialIcons, FontAwesome, Feather } from '@expo/vector-icons';
-import { COLORS } from '../utils/colors';
+import COLORS from '../utils/colors';
 
 export const BtnIconGoBack = ({ navigation, name }) => {
   return (
