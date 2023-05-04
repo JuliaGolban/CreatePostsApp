@@ -1,6 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import { StyleSheet, View, Text, Image, FlatList } from 'react-native';
+import {
+  StyleSheet,
+  View,
+  Text,
+  Image,
+  FlatList,
+  TouchableOpacity,
+  useWindowDimensions,
+} from 'react-native';
+import { Feather } from '@expo/vector-icons';
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from '../../firebase/config';
 import Post from '../../components';
@@ -9,21 +18,24 @@ import COLORS from '../../utils/colors';
 const PostsScreen = ({ navigation, route }) => {
   const [posts, setPosts] = useState([]);
   const { login, email, avatar } = useSelector(state => state.auth);
+  const { width } = useWindowDimensions();
 
   useEffect(() => {
     (async function getPosts() {
+      const array = [];
       try {
         const querySnapshot = await getDocs(collection(db, 'posts'));
         querySnapshot.forEach(doc => {
-          setPosts({ ...doc.data(), id: doc.id });
+          array.push({ ...doc.data(), id: doc.id });
         });
-        console.log(doc.data());
+        setPosts(array);
+        console.log(doc.id, ' ==> ', doc.data());
         console.log('PostsScreen ==>', posts);
       } catch (error) {
         console.log(error);
       }
     })();
-  }, [route.params]);
+  }, [route?.params]);
 
   return (
     <View style={styles.container}>
@@ -40,8 +52,87 @@ const PostsScreen = ({ navigation, route }) => {
       </View>
       <FlatList
         data={posts}
-        keyExtractor={(item, index) => index.toString()}
-        renderItem={({ item }) => <Post item={item} navigation={navigation} />}
+        keyExtractor={item => item.id}
+        // renderItem={({ item }) => <Post item={item} navigation={navigation} />}
+        renderItem={({ item }) => (
+          <View style={styles.postWrapper}>
+            <Image
+              style={{ ...styles.postPhoto, width: width - 16 * 2 }}
+              alt={item.title}
+              source={{ uri: item.photo }}
+            />
+            <Text style={styles.postTitle}>{item.title}</Text>
+            <View style={styles.postIconContainer}>
+              {item.comments !== 0 || item.likes !== 0 ? (
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'flex-start',
+                  }}
+                >
+                  <TouchableOpacity
+                    activeOpacity={0.8}
+                    style={{ ...styles.postIconWrap, marginRight: 24 }}
+                    onPress={() => navigation.navigate('Comments', { item })}
+                  >
+                    <Feather
+                      name="message-circle"
+                      size={20}
+                      color={COLORS.accent}
+                      style={styles.postIcon}
+                    />
+                    <Text style={styles.postIconLabel}>{item.comments}</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    activeOpacity={0.8}
+                    style={styles.postIconWrap}
+                  >
+                    <Feather
+                      name="thumbs-up"
+                      size={20}
+                      color={COLORS.accent}
+                      style={styles.postIcon}
+                    />
+                    <Text style={styles.postIconLabel}>{item.likes}</Text>
+                  </TouchableOpacity>
+                </View>
+              ) : (
+                <TouchableOpacity
+                  activeOpacity={0.8}
+                  style={{ ...styles.postIconWrap, marginRight: 24 }}
+                  onPress={() => navigation.navigate('Comments', { item })}
+                >
+                  <Feather
+                    name="message-circle"
+                    size={20}
+                    color={COLORS.grey_colorText}
+                    style={styles.postIcon}
+                  />
+                  <Text style={styles.postIconLabel}>{item.comments}</Text>
+                </TouchableOpacity>
+              )}
+              <TouchableOpacity
+                activeOpacity={0.8}
+                style={styles.postIconWrap}
+                onPress={() =>
+                  navigation.navigate('Map', {
+                    latitude: item.coords.latitude,
+                    longitude: item.coords.longitude,
+                  })
+                }
+              >
+                <Feather
+                  name="map-pin"
+                  size={20}
+                  color={COLORS.grey_colorText}
+                  style={styles.postIcon}
+                />
+                <Text style={styles.postIconLabel}>{item.location}</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        )}
       />
     </View>
   );
@@ -89,13 +180,14 @@ const styles = StyleSheet.create({
     color: COLORS.black_colorText,
     opacity: 0.8,
   },
-  postBox: {
+
+  postWrapper: {
     marginBottom: 32,
     columnGap: 8,
   },
-  postImage: {
+  postPhoto: {
     height: 240,
-    maxWidth: 350,
+    width: '100%',
     resizeMode: 'cover',
     justifyContent: 'center',
     alignItems: 'center',
@@ -103,12 +195,23 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   postTitle: {
-    fontFamily: 'Roboto-Regular',
-    fontWeight: '400',
+    marginVertical: 8,
+    fontFamily: 'Roboto-Medium',
+    fontWeight: '500',
     fontSize: 16,
     lineHeight: 19,
     textAlign: 'left',
     color: COLORS.black_colorText,
+  },
+  postIconContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  postIconWrap: {
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+    justifyContent: 'flex-start',
   },
   postIcon: { marginRight: 6 },
   postIconLabel: {

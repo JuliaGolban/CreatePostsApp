@@ -12,7 +12,7 @@ import {
   Platform,
   useWindowDimensions,
 } from 'react-native';
-import { AntDesign, MaterialIcons } from '@expo/vector-icons';
+import { AntDesign, MaterialIcons, Feather } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import { collection, getDocs, where, query } from 'firebase/firestore';
 import { db, storage } from '../../firebase/config';
@@ -32,6 +32,7 @@ const ProfileScreen = ({ navigation }) => {
 
   useEffect(() => {
     (async function getUserPosts() {
+      const array = [];
       try {
         const userProfilePosts = query(
           collection(db, 'posts'),
@@ -39,8 +40,9 @@ const ProfileScreen = ({ navigation }) => {
         );
         const querySnapshot = await getDocs(userProfilePosts);
         querySnapshot.forEach(doc => {
-          setPosts({ ...doc.data(), id: doc.id });
+          array.push({ ...doc.data(), id: doc.id });
         });
+        setPosts(array);
         console.log('ProfileScreen ===>', posts);
       } catch (error) {
         console.log(error);
@@ -162,9 +164,94 @@ const ProfileScreen = ({ navigation }) => {
             <Text style={styles.login}>{login}</Text>
             <FlatList
               data={posts}
-              keyExtractor={(item, index) => index.toString()}
+              keyExtractor={item => item.id}
+              // renderItem={({ item }) => <Post item={item} navigation={navigation} />}
               renderItem={({ item }) => (
-                <Post item={item} navigation={navigation} />
+                <View style={styles.postWrapper}>
+                  <Image
+                    style={{ ...styles.postPhoto, width: width - 16 * 2 }}
+                    alt={item.title}
+                    source={{ uri: item.photo }}
+                  />
+                  <Text style={styles.postTitle}>{item.title}</Text>
+                  <View style={styles.postIconContainer}>
+                    {item.comments !== 0 || item.likes !== 0 ? (
+                      <View
+                        style={{
+                          flexDirection: 'row',
+                          alignItems: 'center',
+                          justifyContent: 'flex-start',
+                        }}
+                      >
+                        <TouchableOpacity
+                          activeOpacity={0.8}
+                          style={{ ...styles.postIconWrap, marginRight: 24 }}
+                          onPress={() =>
+                            navigation.navigate('Comments', { item })
+                          }
+                        >
+                          <Feather
+                            name="message-circle"
+                            size={20}
+                            color={COLORS.accent}
+                            style={styles.postIcon}
+                          />
+                          <Text style={styles.postIconLabel}>
+                            {item.comments}
+                          </Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                          activeOpacity={0.8}
+                          style={styles.postIconWrap}
+                        >
+                          <Feather
+                            name="thumbs-up"
+                            size={20}
+                            color={COLORS.accent}
+                            style={styles.postIcon}
+                          />
+                          <Text style={styles.postIconLabel}>{item.likes}</Text>
+                        </TouchableOpacity>
+                      </View>
+                    ) : (
+                      <TouchableOpacity
+                        activeOpacity={0.8}
+                        style={{ ...styles.postIconWrap, marginRight: 24 }}
+                        onPress={() =>
+                          navigation.navigate('Comments', { item })
+                        }
+                      >
+                        <Feather
+                          name="message-circle"
+                          size={20}
+                          color={COLORS.grey_colorText}
+                          style={styles.postIcon}
+                        />
+                        <Text style={styles.postIconLabel}>
+                          {item.comments}
+                        </Text>
+                      </TouchableOpacity>
+                    )}
+                    <TouchableOpacity
+                      activeOpacity={0.8}
+                      style={styles.postIconWrap}
+                      onPress={() =>
+                        navigation.navigate('Map', {
+                          latitude: item.coords.latitude,
+                          longitude: item.coords.longitude,
+                        })
+                      }
+                    >
+                      <Feather
+                        name="map-pin"
+                        size={20}
+                        color={COLORS.grey_colorText}
+                        style={styles.postIcon}
+                      />
+                      <Text style={styles.postIconLabel}>{item.location}</Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
               )}
             />
           </View>
@@ -232,6 +319,48 @@ const styles = StyleSheet.create({
     fontSize: 30,
     lineHeight: 35,
     textAlign: 'center',
+    color: COLORS.black_colorText,
+  },
+
+  postWrapper: {
+    marginBottom: 32,
+    columnGap: 8,
+  },
+  postPhoto: {
+    height: 240,
+    width: '100%',
+    resizeMode: 'cover',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: COLORS.grey_bgColor,
+    borderRadius: 8,
+  },
+  postTitle: {
+    marginVertical: 8,
+    fontFamily: 'Roboto-Medium',
+    fontWeight: '500',
+    fontSize: 16,
+    lineHeight: 19,
+    textAlign: 'left',
+    color: COLORS.black_colorText,
+  },
+  postIconContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  postIconWrap: {
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+    justifyContent: 'flex-start',
+  },
+  postIcon: { marginRight: 6 },
+  postIconLabel: {
+    fontFamily: 'Roboto-Regular',
+    fontWeight: '400',
+    fontSize: 16,
+    lineHeight: 19,
+    textAlign: 'left',
     color: COLORS.black_colorText,
   },
 });

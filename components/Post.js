@@ -19,7 +19,7 @@ const Post = ({ item, navigation }) => {
       <Image
         style={{ ...styles.postPhoto, width: width - 16 * 2 }}
         alt={title}
-        source={photo}
+        source={{ uri: photo }}
       />
       <Text style={styles.postTitle}>{title}</Text>
       <View style={styles.postIconContainer}>
