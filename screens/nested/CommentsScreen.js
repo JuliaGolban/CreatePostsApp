@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import {
   StyleSheet,
   View,
@@ -13,51 +14,19 @@ import {
   TouchableOpacity,
   Alert,
 } from 'react-native';
-import { v4 as uuidv4 } from 'uuid';
 import { Ionicons } from '@expo/vector-icons';
+import db from '../../firebase/config';
 import Comment from '../../components/Comment';
 import COLORS from '../../utils/colors';
 
-const initialState = [
-  {
-    id: '1',
-    userOwn: false,
-    avatar: require('../../assets/images/ellipse.png'),
-    text: 'Really love your most recent photo. I’ve been trying to capture the same thing for a few months and would love some tips!',
-    data: '09 june, 2020 | 08:40',
-  },
-  {
-    id: '2',
-    userOwn: true,
-    avatar: require('../../assets/images/avatar.jpg'),
-    text: 'A fast 50mm like f1.8 would help with the bokeh. I’ve been using primes as they tend to get a bit sharper images.',
-    data: '09 june, 2020 | 09:14',
-  },
-  {
-    id: '3',
-    userOwn: false,
-    avatar: require('../../assets/images/ellipse.png'),
-    text: 'Thank you! That was very helpful!',
-    data: '09 june, 2020 | 09:20',
-  },
-];
-
-const initialStateComment = {
-  id: '',
-  userOwn: true,
-  avatar: require('../../assets/images/avatar.jpg'),
-  text: '',
-  data: '',
-};
-
 const CommentsScreen = ({ navigation, route }) => {
-  // const { post } = route.params;
-  const [allComments, setAllComments] = useState(initialState);
+  const { postID, photo } = route.params;
+  const { login, avatar } = useSelector(state => state.auth);
+  const [allComments, setAllComments] = useState([]);
   const [comment, setComment] = useState('');
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
   const { width } = useWindowDimensions();
 
-  const commentId = uuidv4();
   // creates a date in  the format "DD MMMM, YYYY | HH:MM"
   const year = new Date().getFullYear();
   const month = [
@@ -91,21 +60,38 @@ const CommentsScreen = ({ navigation, route }) => {
     setComment(comment);
   };
 
-  const handleSend = () => {
+  const handleSend = async () => {
     if (!comment.trim()) {
       return Alert.alert('Please, enter your comment');
     }
-    const newComment = {
-      id: commentId,
-      text: comment,
-      data: dateNow,
-      avatar: require('../../assets/images/avatar.jpg'),
-      userOwn: true,
-    };
-    setAllComments(prevState => [...prevState, newComment]);
+    db.firestore()
+      .collection('posts')
+      .doc(postID)
+      .collection('comments')
+      .add({ text: comment, data: dateNow, login, avatar, userOwn: true });
+
     setComment('');
     keyboardHide();
   };
+
+  useEffect(() => {
+    (async function getPosts() {
+      try {
+        await db
+          .firestore()
+          .collection('posts')
+          .doc(postID)
+          .collection('comments')
+          .onSnapshot(data =>
+            setAllComments(
+              data.docs.map(doc => ({ ...doc.data(), id: doc.id }))
+            )
+          );
+      } catch (error) {
+        console.log(error);
+      }
+    })();
+  }, []);
 
   return (
     <TouchableWithoutFeedback onPress={keyboardHide}>
@@ -115,8 +101,7 @@ const CommentsScreen = ({ navigation, route }) => {
         <Image
           style={{ ...styles.postPhoto, width: width - 16 * 2 }}
           alt="Post"
-          source={require('../../assets/images/sunset.jpg')}
-          // source={post.photo}
+          source={{ uri: photo }}
         />
         <FlatList
           data={allComments}

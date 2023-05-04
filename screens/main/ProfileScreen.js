@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   StyleSheet,
   SafeAreaView,
@@ -12,47 +13,32 @@ import {
   useWindowDimensions,
 } from 'react-native';
 import { AntDesign, MaterialIcons } from '@expo/vector-icons';
+import db from '../../firebase/config';
+import { authSignOutUser } from '../../redux/auth/authOperations';
 import Post from '../../components/Post';
 import COLORS from '../../utils/colors';
 
-const initialState = [
-  {
-    id: 1,
-    photo: require('../../assets/images/forest.jpg'),
-    title: 'Forest',
-    comments: 8,
-    likes: 153,
-    location: `Ukraine`,
-  },
-  {
-    id: 2,
-    photo: require('../../assets/images/sunset.jpg'),
-    title: 'Sunset',
-    comments: 3,
-    likes: 200,
-    location: `Ukraine`,
-  },
-  {
-    id: 3,
-    photo: require('../../assets/images/house.jpg'),
-    title: 'Old house',
-    comments: 50,
-    likes: 200,
-    location: `Italy`,
-  },
-];
-
-const ProfileScreen = ({ navigation, route }) => {
-  // const { posts } = route.params;
-  // const { user } = route.params;
-  const [posts, setPosts] = useState(initialState);
-  const [isLoadedAvatar, setIsLoadedAvatar] = useState(true);
+const ProfileScreen = ({ navigation }) => {
+  const dispatch = useDispatch();
+  const { userID, login, avatar } = useSelector(state => state.auth);
+  const [posts, setPosts] = useState([]);
   const { height, width } = useWindowDimensions();
 
-  const handleLoadAvatar = () => {
-    const toggle = isLoadedAvatar ? false : true;
-    setIsLoadedAvatar(toggle);
-  };
+  useEffect(() => {
+    (async function getUserPosts() {
+      try {
+        await db
+          .firestore()
+          .collection('posts')
+          .where('userID', '==', userID)
+          .onSnapshot(data =>
+            setPosts(data.docs.map(doc => ({ ...doc.data(), id: doc.id })))
+          );
+      } catch (error) {
+        console.log(error);
+      }
+    })();
+  }, []);
 
   return (
     <View style={styles.container}>
@@ -75,17 +61,19 @@ const ProfileScreen = ({ navigation, route }) => {
             size={24}
             color={COLORS.grey_colorText}
             style={styles.btnLogout}
-            onPress={() => navigation.navigate('Login')}
+            onPress={() => {
+              dispatch(authSignOutUser());
+              navigation.navigate('Login');
+            }}
           />
           <View style={styles.avatarWrap}>
             <Image
               style={styles.avatar}
               alt="user avatar"
-              source={require('../../assets/images/avatar.jpg')}
-              // source={user.avatar}
+              source={{ uri: avatar }}
             />
             <TouchableOpacity activeOpacity={0.8} onPress={handleLoadAvatar}>
-              {isLoadedAvatar ? (
+              {avatar !== null ? (
                 <AntDesign
                   name="closecircleo"
                   size={25}
@@ -101,11 +89,10 @@ const ProfileScreen = ({ navigation, route }) => {
                 />
               )}
             </TouchableOpacity>
-            <Text style={styles.login}>Natali Romanova</Text>
-            {/* <Text style={styles.login}>{user.login}</Text> */}
+            <Text style={styles.login}>{login}</Text>
             <FlatList
               data={posts}
-              keyExtractor={item => item.id}
+              keyExtractor={(item, index) => index.toString()}
               renderItem={({ item }) => (
                 <Post item={item} navigation={navigation} />
               )}

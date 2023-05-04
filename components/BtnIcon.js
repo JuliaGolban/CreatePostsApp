@@ -101,7 +101,7 @@ export const BtnIconCamera = ({
       }}
       onPress={handleDeletePhoto}
     >
-      <FontAwesome name="camera" size={24} c color={COLORS.white} />
+      <FontAwesome name="camera" size={24} color={COLORS.white} />
     </TouchableOpacity>
   );
 };

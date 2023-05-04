@@ -14,6 +14,8 @@ import {
   Alert,
 } from 'react-native';
 import { Octicons } from '@expo/vector-icons';
+import { useDispatch } from 'react-redux';
+import { authSignInUser } from '../../redux/auth/authOperations';
 import COLORS from '../../utils/colors';
 
 const initialState = {
@@ -26,7 +28,7 @@ const LoginScreen = ({ navigation }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [isFocusedInput, setIsFocusedInput] = useState(null);
   // const [isShowKeyboard, setIsShowKeyboard] = useState(false);
-
+  const dispatch = useDispatch();
   const { height, width } = useWindowDimensions();
 
   const keyboardHide = () => {
@@ -41,11 +43,14 @@ const LoginScreen = ({ navigation }) => {
   };
 
   const handleSubmit = () => {
+    keyboardHide();
+
     if (state.email === '' || state.password === '') {
       return Alert.alert('Please, enter your credentials');
     }
     console.log(state);
-    // navigation.navigate('Home', user: state);
+    dispatch(authSignInUser(state));
+
     setState(initialState);
   };
 

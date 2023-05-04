@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from 'react';
-import { NavigationContainer } from '@react-navigation/native';
+import React from 'react';
 import { useFonts } from 'expo-font';
-import { useRoute } from './navigations/router';
+import { Provider } from 'react-redux';
+import { store } from './redux/store';
+import { Main } from './components';
 
 export default function App() {
-  const routing = useRoute(true);
   const [fontsLoaded] = useFonts({
     'SFProDisplay-Light': require('./assets/fonts/SFProDisplay-Light.ttf'),
     'SFProDisplay-Regular': require('./assets/fonts/SFProDisplay-Regular.ttf'),
@@ -17,5 +17,9 @@ export default function App() {
     return null;
   }
 
-  return <NavigationContainer>{routing}</NavigationContainer>;
+  return (
+    <Provider store={store}>
+      <Main />
+    </Provider>
+  );
 }

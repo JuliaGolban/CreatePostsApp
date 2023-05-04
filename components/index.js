@@ -8,6 +8,7 @@ import InputPassword from './InputPassword';
 import InputCommentSend from './InputCommentSend';
 import Link from './Link';
 import Comment from './Comment';
+import Main from './Main';
 
 export {
   Header,
@@ -20,4 +21,5 @@ export {
   InputCommentSend,
   Link,
   Comment,
+  Main,
 };
